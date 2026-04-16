@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\KrsController;
 use App\Http\Controllers\Api\V1\KhsController;
+use App\Http\Controllers\Api\V1\ClassController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -23,3 +24,6 @@ Route::get('/v1/krs/active', [KrsController::class, 'melihatKrsAktif']);
 
 Route::put('/v1/khs/publish', [KhsController::class, 'publishNilai']);
 Route::get('/v1/khs/{semseter}', [KhsController::class, 'lihatKhs']);
+
+Route::get('/v1/classes', [ClassController::class, 'jadwalKelas']);
+Route::post('/v1/classes', [ClassController::class, 'membuatKelas']);

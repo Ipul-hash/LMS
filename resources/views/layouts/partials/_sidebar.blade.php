@@ -76,8 +76,8 @@
                         </span>
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('master.pengguna.*') ? 'active' : '' }}"
-                                    href="#">
+                                <a class="menu-link {{ request()->routeIs('dataPengguna ') ? 'active' : '' }}"
+                                    href="{{ route('dataPengguna') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -85,31 +85,35 @@
                                 </a>
                             </div>
                             <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('master.matkul.*') ? 'active' : '' }}"
-                                    href="#">
+                                <a class="menu-link {{ request()->routeIs('manajemenRole') ? 'active' : '' }}"
+                                    href="{{route ('manajemenRole') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Manajemen Role</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('manajemenSidebar') ? 'active' : '' }}"
+                                    href="{{route ('manajemenSidebar') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Manajemen Sidebar</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('dataMatkul') ? 'active' : '' }}"
+                                    href="{{route ('dataMatkul') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
                                     <span class="menu-title">Data Mata Kuliah</span>
                                 </a>
                             </div>
-                        </div>
-                    </div>
-
-                    {{-- Operasional Kelas --}}
-                    <div data-kt-menu-trigger="click"
-                        class="menu-item menu-accordion {{ request()->routeIs('operasional.*') ? 'here show' : '' }}">
-                        <span class="menu-link">
-                            <span class="menu-icon">
-                                <i class="ki-outline ki-book-open fs-2"></i>
-                            </span>
-                            <span class="menu-title">Operasional Kelas</span>
-                            <span class="menu-arrow"></span>
-                        </span>
-                        <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('operasional.kelas.*') ? 'active' : '' }}"
-                                    href="#">
+                                <a class="menu-link {{ request()->routeIs('dataKelas') ? 'active' : '' }}"
+                                    href="{{route ('dataKelas') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -117,7 +121,9 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                        </div>
+
+                   
 
                     {{-- Manajemen Akademik --}}
                     <div data-kt-menu-trigger="click"

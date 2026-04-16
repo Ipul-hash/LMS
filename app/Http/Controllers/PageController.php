@@ -14,6 +14,31 @@ class PageController extends Controller
         return view('admin.dashboard');
     }
 
+    public function dataMatkul()
+    {
+        return view('admin.datamatkul');
+    }    
+
+    public function dataKelas()
+    {
+        return view('admin.manajemenkelas');
+    }
+
+    public function dataPengguna()
+    {
+        return view('admin.datapengguna');
+    }
+
+    public function manajemenRole()
+    {
+        return view('admin.manajemenrole');
+    }
+
+    public function manajemenSidebar()
+    {
+        return view('admin.manajemensidebar');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
