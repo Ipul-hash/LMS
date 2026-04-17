@@ -8,345 +8,7 @@
     <li class="breadcrumb-item">
         <span class="bullet bg-gray-500 w-5px h-2px"></span>
     </li>
-    <li class="breadcrumb-item text-muted">Data Pengguna</li>
-@endsection
-
-@section('toolbar-actions')
-    <button type="button" class="btn btn-sm fw-bold btn-primary gap-2" data-bs-toggle="modal" data-bs-target="#userModal">
-        <span class="svg-icon svg-icon-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="white" />
-                <rect x="10.8891" y="5.25879" width="2.15616" height="12" fill="white" />
-                <path d="M5.4044 9.75879H19.2257C20.1957 9.75879 21.1957 10.4798 21.1957 11.4798V21.4798C21.1957 22.4798 20.1957 23.1799 19.2257 23.1799H5.4044C4.4344 23.1799 3.4344 22.4798 3.4344 21.4798V11.4798C3.4344 10.4798 4.4344 9.75879 5.4044 9.75879Z" fill="white" />
-            </svg>
-        </span>
-        Tambah Pengguna
-    </button>
-@endsection
-
-@section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card card-flush">
-                <div class="card-header py-4 d-flex align-items-center border-0">
-                    <input type="text" class="form-control form-control-solid" placeholder="Cari pengguna..." id="searchInput" style="max-width: 250px;">
-                </div>
-
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-borderless align-middle" style="margin-bottom: 0;">
-                            <thead class="bg-light-gray">
-                                <tr>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Nama Lengkap</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">NIM/NIP</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Email</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Role</th>
-                                    <th style="width: 100px;" class="text-muted fw-bold fs-7 text-uppercase">Status</th>
-                                    <th style="width: 80px;" class="text-muted fw-bold fs-7 text-uppercase">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userTableBody" class="fs-6">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="emptyState" class="text-center py-8 d-none">
-                        <div class="mb-2 text-muted fs-6">Tidak ada data pengguna</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form id="userForm">
-                    <div class="modal-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Nama Lengkap</label>
-                            <input type="text" class="form-control form-control-lg" id="nama" placeholder="Toni Hermawan" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">NIM/NIP</label>
-                            <input type="text" class="form-control form-control-lg" id="nimNip" placeholder="210203001" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Email</label>
-                            <input type="email" class="form-control form-control-lg" id="email" placeholder="toni@kampus.ac.id" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Password</label>
-                            <input type="password" class="form-control form-control-lg" id="password" placeholder="••••••••" required>
-                            <small class="text-muted" id="passwordHint" style="display: none;">Kosongkan jika tidak ingin mengubah password</small>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Role</label>
-                            <select class="form-select form-select-lg" id="role" required>
-                                <option value="">Pilih Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="dosen">Dosen</option>
-                                <option value="mahasiswa">Mahasiswa</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Status</label>
-                            <select class="form-select form-select-lg" id="status" required>
-                                <option value="">Pilih Status</option>
-                                <option value="aktif">Aktif</option>
-                                <option value="nonaktif">Nonaktif</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Hapus Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <div class="icon-circle icon-warning" style="margin: 0 auto;">⚠</div>
-                    </div>
-                    <p class="text-gray-700 text-center mb-0">
-                        Apakah Anda yakin ingin menghapus pengguna <strong id="deleteItemName"></strong>?
-                    </p>
-                    <p class="text-muted text-center fs-8 mt-2">Tindakan ini tidak dapat dibatalkan</p>
-                </div>
-
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    </div>
-@endsection
-
-@push('styles')
-    <style>
-        .table tbody tr { transition: background-color 0.2s ease; border-bottom: 1px solid #f0f0f0; }
-        .table tbody tr:hover { background-color: #f9f9f9; }
-        .table thead { background-color: #f8f9fa; }
-        .bg-light-gray { background-color: #f8f9fa !important; }
-        .badge { font-size: 0.75rem; padding: 0.4rem 0.8rem; font-weight: 600; border-radius: 4px; }
-        .badge-success { background-color: #d4edda; color: #155724; }
-        .badge-secondary { background-color: #e7e7e7; color: #666; }
-        .badge-primary { background-color: #cfe2ff; color: #084298; }
-        .btn-actions { display: flex; gap: 6px; }
-        .btn-icon-sm { width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; font-size: 16px; transition: all 0.2s ease; }
-        .btn-icon-edit { background-color: #e3f2fd; color: #1976d2; }
-        .btn-icon-edit:hover { background-color: #1976d2; color: white; }
-        .btn-icon-delete { background-color: #ffebee; color: #d32f2f; }
-        .btn-icon-delete:hover { background-color: #d32f2f; color: white; }
-        .toast { background-color: white; border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); border: none; min-width: 340px; animation: slideIn 0.3s ease; }
-        .toast-success { border-left: 4px solid #4caf50; }
-        .icon-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .icon-warning { background-color: #fff3e0; color: #ff9800; }
-        .modal-content { border: none; border-radius: 8px; box-shadow: 0 5px 30px rgba(0, 0, 0, 0.12); }
-        .form-control-lg, .form-select-lg { border-radius: 4px; border: 1px solid #e0e0e0; padding: 0.65rem 1rem; font-size: 0.95rem; }
-        .form-control-lg:focus, .form-select-lg:focus { border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1); }
-        .form-label { color: #333; }
-        .btn-primary { background-color: #1976d2; border-color: #1976d2; }
-        .btn-primary:hover { background-color: #1565c0; border-color: #1565c0; }
-        .btn-danger { background-color: #d32f2f; border-color: #d32f2f; }
-        .btn-danger:hover { background-color: #c62828; border-color: #c62828; }
-        .btn-light { background-color: #f5f5f5; border-color: #e0e0e0; color: #333; }
-        .btn-light:hover { background-color: #eeeeee; }
-        .text-muted { color: #999 !important; }
-        .table td { padding: 12px 16px; vertical-align: middle; }
-        .table th { padding: 12px 16px; font-weight: 700; }
-        .text-gray-700 { color: #555; }
-        .fs-8 { font-size: 0.75rem !important; }
-        .text-primary { color: #1976d2 !important; }
-        .text-gray-600 { color: #666 !important; }
-        .text-gray-900 { color: #333 !important; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
-    </style>
-@endpush
-
-@push('scripts')
-    <script>
-        let editingId = null, deleteId = null, currentData = [], allData = [
-            { id: 1, name: 'Admin User', nim_nip: 'ADM001', email: 'admin@kampus.ac.id', role: 'admin', status: 'aktif' },
-            { id: 2, name: 'Dr. Santoso, M.Kom', nim_nip: 'NIP1001', email: 'santoso@kampus.ac.id', role: 'dosen', status: 'aktif' },
-            { id: 3, name: 'Ir. Rina, M.T', nim_nip: 'NIP1002', email: 'rina@kampus.ac.id', role: 'dosen', status: 'aktif' },
-            { id: 4, name: 'Toni Hermawan', nim_nip: '210203001', email: 'toni@kampus.ac.id', role: 'mahasiswa', status: 'aktif' },
-            { id: 5, name: 'Siti Nurhaliza', nim_nip: '210203002', email: 'siti@kampus.ac.id', role: 'mahasiswa', status: 'nonaktif' }
-        ];
-
-        function getRoleBadge(role) {
-            const roles = { 'admin': { color: 'primary', text: 'Admin' }, 'dosen': { color: 'warning', text: 'Dosen' }, 'mahasiswa': { color: 'secondary', text: 'Mahasiswa' } };
-            return roles[role] || { color: 'secondary', text: role };
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('userTableBody');
-            const emptyState = document.getElementById('emptyState');
-            if (data.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('d-none');
-                return;
-            }
-            emptyState.classList.add('d-none');
-            tbody.innerHTML = data.map((item) => {
-                const roleBadge = getRoleBadge(item.role);
-                return `<tr>
-                    <td><span class="fw-bold text-primary">${item.name}</span></td>
-                    <td><span class="text-gray-600">${item.nim_nip}</span></td>
-                    <td><span class="text-gray-600">${item.email}</span></td>
-                    <td><span class="badge badge-${roleBadge.color}">${roleBadge.text}</span></td>
-                    <td><span class="badge ${item.status === 'aktif' ? 'badge-success' : 'badge-secondary'}">${item.status === 'aktif' ? '✓ Aktif' : '○ Nonaktif'}</span></td>
-                    <td><div class="btn-actions"><button type="button" class="btn-icon-sm btn-icon-edit" onclick="editUser(${item.id})" title="Edit">✎</button><button type="button" class="btn-icon-sm btn-icon-delete" onclick="showDeleteConfirm(${item.id}, '${item.name}')" title="Hapus">✕</button></div></td>
-                </tr>`;
-            }).join('');
-        }
-
-        function editUser(id) {
-            const item = allData.find(x => x.id === id);
-            if (!item) return;
-            editingId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Pengguna';
-            document.getElementById('nama').value = item.name;
-            document.getElementById('nimNip').value = item.nim_nip;
-            document.getElementById('email').value = item.email;
-            document.getElementById('password').value = '';
-            document.getElementById('passwordHint').style.display = 'block';
-            document.getElementById('password').removeAttribute('required');
-            document.getElementById('role').value = item.role;
-            document.getElementById('status').value = item.status;
-            new bootstrap.Modal(document.getElementById('userModal')).show();
-        }
-
-        function showDeleteConfirm(id, name) {
-            deleteId = id;
-            document.getElementById('deleteItemName').textContent = name;
-            new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
-        }
-
-        function deleteUser() {
-            if (deleteId === null) return;
-            const index = allData.findIndex(x => x.id === deleteId);
-            if (index > -1) {
-                const deletedItem = allData.splice(index, 1)[0];
-                currentData = allData;
-                renderTable(currentData);
-                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                showToast(`${deletedItem.name} telah dihapus`, 'success');
-                deleteId = null;
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toastId = 'toast-' + Date.now();
-            let icon = '✓', toastClass = 'toast-success';
-            const toastHTML = `
-                <div id="${toastId}" class="toast ${toastClass}" role="alert">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="icon-circle" style="flex-shrink: 0; background-color: #e8f5e9; color: #4caf50;">${icon}</div>
-                        <div class="flex-grow-1 pt-2"><div class="fw-semibold text-gray-900" style="font-size: 0.95rem;">${message}</div></div>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', toastHTML);
-            const toastElement = document.getElementById(toastId);
-            setTimeout(() => {
-                toastElement.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => toastElement.remove(), 300);
-            }, 4000);
-        }
-
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = {
-                name: document.getElementById('nama').value,
-                nim_nip: document.getElementById('nimNip').value,
-                email: document.getElementById('email').value,
-                role: document.getElementById('role').value,
-                status: document.getElementById('status').value
-            };
-            if (editingId) {
-                const index = allData.findIndex(x => x.id === editingId);
-                if (index > -1) {
-                    allData[index] = { ...allData[index], ...formData };
-                    showToast(`${formData.name} telah diperbarui`, 'success');
-                    editingId = null;
-                }
-            } else {
-                const newId = Math.max(...allData.map(x => x.id), 0) + 1;
-                allData.unshift({ id: newId, ...formData });
-                showToast(`${formData.name} telah ditambahkan`, 'success');
-            }
-            currentData = allData;
-            renderTable(currentData);
-            this.reset();
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-            if (window.updateSidebarFromRole) {
-                window.updateSidebarFromRole(formData.role);
-            }
-        });
-
-        document.getElementById('confirmDeleteBtn').addEventListener('click', deleteUser);
-        document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('userForm').reset();
-            document.getElementById('modalTitle').textContent = 'Tambah Pengguna';
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            editingId = null;
-        });
-
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const query = e.target.value.toLowerCase();
-            const filtered = allData.filter(item =>
-                item.name.toLowerCase().includes(query) ||
-                item.email.toLowerCase().includes(query) ||
-                item.nim_nip.toLowerCase().includes(query)
-            );
-            currentData = filtered;
-            renderTable(currentData);
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            renderTable(allData);
-            currentData = allData;
-        });
-    </script>
-@endpush
-@extends('layouts.app')
-
-@section('title', 'Data Pengguna')
-
-@section('page-title', 'Data Pengguna')
-
-@section('breadcrumb')
+    <li class="breadcrumb-item text-muted">Master Data</li>
     <li class="breadcrumb-item">
         <span class="bullet bg-gray-500 w-5px h-2px"></span>
     </li>
@@ -354,1265 +16,558 @@
 @endsection
 
 @section('toolbar-actions')
-    <button type="button" class="btn btn-sm fw-bold btn-primary gap-2" data-bs-toggle="modal" data-bs-target="#userModal">
-        <span class="svg-icon svg-icon-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="white" />
-                <rect x="10.8891" y="5.25879" width="2.15616" height="12" fill="white" />
-                <path d="M5.4044 9.75879H19.2257C20.1957 9.75879 21.1957 10.4798 21.1957 11.4798V21.4798C21.1957 22.4798 20.1957 23.1799 19.2257 23.1799H5.4044C4.4344 23.1799 3.4344 22.4798 3.4344 21.4798V11.4798C3.4344 10.4798 4.4344 9.75879 5.4044 9.75879Z" fill="white" />
-            </svg>
-        </span>
+    <button type="button" class="btn btn-sm fw-bold btn-primary"
+        data-bs-toggle="modal" data-bs-target="#userModal">
+        <i class="ki-outline ki-plus-square fs-3 me-1"></i>
         Tambah Pengguna
     </button>
 @endsection
 
 @section('content')
+
+    {{-- Flash Messages --}}
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show mb-5" role="alert">
+            <i class="ki-outline ki-check-circle fs-4 me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+            <i class="ki-outline ki-cross-circle fs-4 me-2"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-12">
             <div class="card card-flush">
-                <div class="card-header py-4 d-flex align-items-center border-0">
-                    <input type="text" class="form-control form-control-solid" placeholder="Cari pengguna..." id="searchInput" style="max-width: 250px;">
+
+                <div class="card-header py-4 gap-3 border-0 flex-wrap">
+                    <div class="d-flex align-items-center gap-3">
+                        <form method="GET" action="{{ route('dataPengguna') }}" class="d-flex gap-3">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control form-control-solid w-250px"
+                                placeholder="Cari nama, NIM/NIP, email...">
+
+                            <select name="role" class="form-select form-select-solid w-150px">
+                                <option value="">Semua Role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->name }}" {{ request('role') === $role->name ? 'selected' : '' }}>
+                                        {{ ucfirst($role->name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <select name="status" class="form-select form-select-solid w-150px">
+                                <option value="">Semua Status</option>
+                                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+
+                            <button type="submit" class="btn btn-light-primary">Filter</button>
+                            @if (request()->hasAny(['search', 'role', 'status']))
+                                <a href="{{ route('dataPengguna') }}" class="btn btn-light">Reset</a>
+                            @endif
+                        </form>
+                    </div>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body pt-0">
                     <div class="table-responsive">
-                        <table class="table table-borderless align-middle" style="margin-bottom: 0;">
-                            <thead class="bg-light-gray">
-                                <tr>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Nama Lengkap</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">NIM/NIP</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Email</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Role</th>
-                                    <th style="width: 100px;" class="text-muted fw-bold fs-7 text-uppercase">Status</th>
-                                    <th style="width: 80px;" class="text-muted fw-bold fs-7 text-uppercase">Aksi</th>
+                        <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+                            <thead>
+                                <tr class="fw-bold text-muted">
+                                    <th class="min-w-180px">Nama Lengkap</th>
+                                    <th class="min-w-120px">NIM / NIP</th>
+                                    <th class="min-w-200px">Email</th>
+                                    <th class="min-w-100px">Role</th>
+                                    <th class="min-w-100px">Status</th>
+                                    <th class="min-w-100px text-end">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody" class="fs-6">
+                            <tbody>
+                                @forelse ($users as $user)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="symbol symbol-35px">
+                                                    <span class="symbol-label bg-light-primary text-primary fw-bold fs-6">
+                                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                    </span>
+                                                </div>
+                                                <span class="text-gray-900 fw-bold fs-6">{{ $user->name }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted fw-semibold">{{ $user->nim_nip }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted fw-semibold">{{ $user->email }}</span>
+                                        </td>
+                                        <td>
+                                            @php $roleName = $user->roles->first()?->name ?? null @endphp
+                                            @if ($roleName === 'admin')
+                                                <span class="badge badge-light-primary fw-semibold">Admin</span>
+                                            @elseif ($roleName === 'dosen')
+                                                <span class="badge badge-light-warning fw-semibold">Dosen</span>
+                                            @elseif ($roleName === 'mahasiswa')
+                                                <span class="badge badge-light-info fw-semibold">Mahasiswa</span>
+                                            @elseif ($roleName)
+                                                <span class="badge badge-light-secondary fw-semibold">{{ ucfirst($roleName) }}</span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button type="button"
+                                                class="btn btn-sm px-3 py-1 fw-semibold toggle-status-btn
+                                                    {{ $user->is_active ? 'btn-light-success' : 'btn-light-danger' }}"
+                                                data-id="{{ $user->id }}"
+                                                data-name="{{ $user->name }}"
+                                                data-active="{{ $user->is_active ? '1' : '0' }}"
+                                                data-url="{{ route('dataPengguna.toggleStatus', $user) }}"
+                                                {{ $user->id === auth()->id() ? 'disabled title=Tidak dapat mengubah status akun sendiri' : '' }}>
+                                                {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
+                                            </button>
+                                        </td>
+                                        <td class="text-end">
+                                            <button type="button"
+                                                class="btn btn-sm btn-icon btn-light-primary me-1 edit-btn"
+                                                data-id="{{ $user->id }}"
+                                                data-name="{{ $user->name }}"
+                                                data-nim="{{ $user->nim_nip }}"
+                                                data-email="{{ $user->email }}"
+                                                data-role="{{ $user->roles->first()?->name }}"
+                                                data-active="{{ $user->is_active ? '1' : '0' }}"
+                                                title="Edit">
+                                                <i class="ki-outline ki-pencil fs-4"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-sm btn-icon btn-light-danger delete-btn"
+                                                data-id="{{ $user->id }}"
+                                                data-name="{{ $user->name }}"
+                                                data-url="{{ route('dataPengguna.destroy', $user) }}"
+                                                {{ $user->id === auth()->id() ? 'disabled title=Tidak dapat menghapus akun sendiri' : '' }}
+                                                title="Hapus">
+                                                <i class="ki-outline ki-trash fs-4"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-10">
+                                            <i class="ki-outline ki-people fs-2x text-muted d-block mb-3"></i>
+                                            <span class="text-muted fs-6">Belum ada data pengguna</span>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div id="emptyState" class="text-center py-8 d-none">
-                        <div class="mb-2 text-muted fs-6">Tidak ada data pengguna</div>
-                    </div>
+
+                    @if ($users->hasPages())
+                        <div class="d-flex justify-content-between align-items-center pt-4">
+                            <span class="text-muted fs-7">
+                                Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }}
+                                dari {{ $users->total() }} pengguna
+                            </span>
+                            {{ $users->withQueryString()->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 
+
+    {{-- Modal Tambah / Edit --}}
     <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold" id="modalTitle">Tambah Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form id="userForm">
+                <form id="userForm" novalidate>
+                    @csrf
+                    <input type="hidden" id="userId">
+                    <input type="hidden" id="formMethod" value="POST">
+
                     <div class="modal-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Nama Lengkap</label>
-                            <input type="text" class="form-control form-control-lg" id="nama" placeholder="Toni Hermawan" required>
+
+                        <div id="formErrorAlert" class="alert alert-danger d-none mb-4">
+                            <ul id="formErrorList" class="mb-0 ps-3"></ul>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">NIM/NIP</label>
-                            <input type="text" class="form-control form-control-lg" id="nimNip" placeholder="210203001" required>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold required">Nama Lengkap</label>
+                            <input type="text" class="form-control form-control-solid"
+                                id="inputName" name="name" placeholder="Contoh: Toni Hermawan">
+                            <div class="invalid-feedback" id="nameError"></div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Email</label>
-                            <input type="email" class="form-control form-control-lg" id="email" placeholder="toni@kampus.ac.id" required>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold required">NIM / NIP</label>
+                            <input type="text" class="form-control form-control-solid"
+                                id="inputNimNip" name="nim_nip" placeholder="210203001">
+                            <div class="invalid-feedback" id="nimNipError"></div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Password</label>
-                            <input type="password" class="form-control form-control-lg" id="password" placeholder="••••••••" id="editMode" ? '' : 'required'>
-                            <small class="text-muted" id="passwordHint" style="display: none;">Kosongkan jika tidak ingin mengubah password</small>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold required">Email</label>
+                            <input type="email" class="form-control form-control-solid"
+                                id="inputEmail" name="email" placeholder="toni@kampus.ac.id">
+                            <div class="invalid-feedback" id="emailError"></div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Role</label>
-                            <select class="form-select form-select-lg" id="role" required>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold" id="passwordLabel">
+                                Password <span class="text-danger" id="passwordRequired">*</span>
+                            </label>
+                            <input type="password" class="form-control form-control-solid"
+                                id="inputPassword" name="password" placeholder="Min. 8 karakter">
+                            <div class="text-muted fs-7 mt-1 d-none" id="passwordHint">
+                                Kosongkan jika tidak ingin mengubah password
+                            </div>
+                            <div class="invalid-feedback" id="passwordError"></div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold" id="passwordConfirmLabel">
+                                Konfirmasi Password <span class="text-danger" id="passwordConfirmRequired">*</span>
+                            </label>
+                            <input type="password" class="form-control form-control-solid"
+                                id="inputPasswordConfirm" name="password_confirmation" placeholder="Ulangi password">
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold required">Role</label>
+                            <select class="form-select form-select-solid" id="inputRole" name="role">
                                 <option value="">Pilih Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="dosen">Dosen</option>
-                                <option value="mahasiswa">Mahasiswa</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                                @endforeach
                             </select>
+                            <div class="invalid-feedback" id="roleError"></div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Status</label>
-                            <select class="form-select form-select-lg" id="status" required>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold required">Status</label>
+                            <select class="form-select form-select-solid" id="inputStatus" name="is_active">
                                 <option value="">Pilih Status</option>
-                                <option value="aktif">Aktif</option>
-                                <option value="nonaktif">Nonaktif</option>
+                                <option value="1">Aktif</option>
+                                <option value="0">Nonaktif</option>
                             </select>
+                            <div class="invalid-feedback" id="isActiveError"></div>
                         </div>
+
                     </div>
 
                     <div class="modal-footer border-top-0 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="indicator-label">Simpan</span>
+                            <span class="indicator-progress d-none">
+                                <span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...
+                            </span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    {{-- Modal Hapus --}}
+    <div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold">Hapus Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <div class="icon-circle icon-warning" style="margin: 0 auto;">
-                            ⚠
-                        </div>
-                    </div>
-                    <p class="text-gray-700 text-center mb-0">
-                        Apakah Anda yakin ingin menghapus pengguna <strong id="deleteItemName"></strong>?
+                <div class="modal-body text-center py-6">
+                    <i class="ki-outline ki-trash fs-3x text-danger mb-4 d-block"></i>
+                    <p class="text-gray-700 fs-5 mb-1">
+                        Hapus pengguna <strong id="deleteUserName"></strong>?
                     </p>
-                    <p class="text-muted text-center fs-8 mt-2">Tindakan ini tidak dapat dibatalkan</p>
+                    <p class="text-muted fs-7">Tindakan ini tidak dapat dibatalkan.</p>
                 </div>
-
-                <div class="modal-footer border-top-0">
+                <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <span class="indicator-label">Hapus</span>
+                        <span class="indicator-progress d-none">
+                            <span class="spinner-border spinner-border-sm me-2"></span>Menghapus...
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    </div>
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;"></div>
+
 @endsection
-
-@push('styles')
-    <style>
-        .table tbody tr {
-            transition: background-color 0.2s ease;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .table thead {
-            background-color: #f8f9fa;
-        }
-
-        .bg-light-gray {
-            background-color: #f8f9fa !important;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.4rem 0.8rem;
-            font-weight: 600;
-            border-radius: 4px;
-        }
-
-        .badge-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .badge-secondary {
-            background-color: #e7e7e7;
-            color: #666;
-        }
-
-        .badge-primary {
-            background-color: #cfe2ff;
-            color: #084298;
-        }
-
-        .badge-warning {
-            background-color: #fff3cd;
-            color: #664d03;
-        }
-
-        .btn-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-icon-sm {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-icon-edit {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .btn-icon-edit:hover {
-            background-color: #1976d2;
-            color: white;
-        }
-
-        .btn-icon-delete {
-            background-color: #ffebee;
-            color: #d32f2f;
-        }
-
-        .btn-icon-delete:hover {
-            background-color: #d32f2f;
-            color: white;
-        }
-
-        .toast {
-            background-color: white;
-            border-radius: 6px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-            border: none;
-            min-width: 340px;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast-success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast-error {
-            border-left: 4px solid #f44336;
-        }
-
-        .icon-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .icon-success {
-            background-color: #e8f5e9;
-            color: #4caf50;
-        }
-
-        .icon-error {
-            background-color: #ffebee;
-            color: #f44336;
-        }
-
-        .icon-warning {
-            background-color: #fff3e0;
-            color: #ff9800;
-        }
-
-        .modal-content {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .form-control-lg, .form-select-lg {
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-            padding: 0.65rem 1rem;
-            font-size: 0.95rem;
-        }
-
-        .form-control-lg:focus, .form-select-lg:focus {
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-        }
-
-        .form-label {
-            color: #333;
-        }
-
-        small {
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .btn-primary {
-            background-color: #1976d2;
-            border-color: #1976d2;
-        }
-
-        .btn-primary:hover {
-            background-color: #1565c0;
-            border-color: #1565c0;
-        }
-
-        .btn-danger {
-            background-color: #d32f2f;
-            border-color: #d32f2f;
-        }
-
-        .btn-danger:hover {
-            background-color: #c62828;
-            border-color: #c62828;
-        }
-
-        .btn-light {
-            background-color: #f5f5f5;
-            border-color: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-light:hover {
-            background-color: #eeeeee;
-        }
-
-        .text-muted {
-            color: #999 !important;
-        }
-
-        .table td {
-            padding: 12px 16px;
-            vertical-align: middle;
-        }
-
-        .table th {
-            padding: 12px 16px;
-            font-weight: 700;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-        }
-
-        .text-gray-700 {
-            color: #555;
-        }
-
-        .fs-8 {
-            font-size: 0.75rem !important;
-        }
-
-        .text-primary {
-            color: #1976d2 !important;
-        }
-
-        .text-gray-600 {
-            color: #666 !important;
-        }
-
-        .text-gray-900 {
-            color: #333 !important;
-        }
-    </style>
-@endpush
 
 @push('scripts')
-    <script>
-        let editingId = null;
-        let deleteId = null;
-        let currentData = [];
-        let allData = [
-            {
-                id: 1,
-                name: 'Admin User',
-                nim_nip: 'ADM001',
-                email: 'admin@kampus.ac.id',
-                role: 'admin',
-                status: 'aktif'
-            },
-            {
-                id: 2,
-                name: 'Dr. Santoso, M.Kom',
-                nim_nip: 'NIP1001',
-                email: 'santoso@kampus.ac.id',
-                role: 'dosen',
-                status: 'aktif'
-            },
-            {
-                id: 3,
-                name: 'Ir. Rina, M.T',
-                nim_nip: 'NIP1002',
-                email: 'rina@kampus.ac.id',
-                role: 'dosen',
-                status: 'aktif'
-            },
-            {
-                id: 4,
-                name: 'Toni Hermawan',
-                nim_nip: '210203001',
-                email: 'toni@kampus.ac.id',
-                role: 'mahasiswa',
-                status: 'aktif'
-            },
-            {
-                id: 5,
-                name: 'Siti Nurhaliza',
-                nim_nip: '210203002',
-                email: 'siti@kampus.ac.id',
-                role: 'mahasiswa',
-                status: 'nonaktif'
-            }
-        ];
+<script>
+    const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 
-        function getRoleBadge(role) {
-            const roles = {
-                'admin': { color: 'primary', text: 'Admin' },
-                'dosen': { color: 'warning', text: 'Dosen' },
-                'mahasiswa': { color: 'secondary', text: 'Mahasiswa' }
-            };
-            return roles[role] || { color: 'secondary', text: role };
-        }
+    let deleteUrl  = null;
+    let isEditMode = false;
 
-        function renderTable(data) {
-            const tbody = document.getElementById('userTableBody');
-            const emptyState = document.getElementById('emptyState');
+    // ─── Edit Button ─────────────────────────────────────────────────────────────
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            isEditMode = true;
 
-            if (data.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('d-none');
-                return;
-            }
+            const id     = this.dataset.id;
+            const name   = this.dataset.name;
+            const nim    = this.dataset.nim;
+            const email  = this.dataset.email;
+            const role   = this.dataset.role;
+            const active = this.dataset.active;
 
-            emptyState.classList.add('d-none');
-            tbody.innerHTML = data.map((item) => {
-                const roleBadge = getRoleBadge(item.role);
-                return `
-                    <tr>
-                        <td><span class="fw-bold text-primary">${item.name}</span></td>
-                        <td><span class="text-gray-600">${item.nim_nip}</span></td>
-                        <td><span class="text-gray-600">${item.email}</span></td>
-                        <td><span class="badge badge-${roleBadge.color}">${roleBadge.text}</span></td>
-                        <td>
-                            <span class="badge ${item.status === 'aktif' ? 'badge-success' : 'badge-secondary'}">
-                                ${item.status === 'aktif' ? '✓ Aktif' : '○ Nonaktif'}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="btn-actions">
-                                <button type="button" class="btn-icon-sm btn-icon-edit" onclick="editUser(${item.id})" title="Edit">
-                                    ✎
-                                </button>
-                                <button type="button" class="btn-icon-sm btn-icon-delete" onclick="showDeleteConfirm(${item.id}, '${item.name}')" title="Hapus">
-                                    ✕
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
+            document.getElementById('modalTitle').textContent    = 'Edit Pengguna';
+            document.getElementById('userId').value              = id;
+            document.getElementById('formMethod').value          = 'PUT';
+            document.getElementById('inputName').value           = name;
+            document.getElementById('inputNimNip').value         = nim;
+            document.getElementById('inputEmail').value          = email;
+            document.getElementById('inputRole').value           = role;
+            document.getElementById('inputStatus').value         = active;
+            document.getElementById('inputPassword').value       = '';
+            document.getElementById('inputPasswordConfirm').value = '';
 
-        function editUser(id) {
-            const item = allData.find(x => x.id === id);
-            if (!item) return;
+            document.getElementById('passwordHint').classList.remove('d-none');
+            document.getElementById('passwordRequired').classList.add('d-none');
+            document.getElementById('passwordConfirmRequired').classList.add('d-none');
 
-            editingId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Pengguna';
-            document.getElementById('nama').value = item.name;
-            document.getElementById('nimNip').value = item.nim_nip;
-            document.getElementById('email').value = item.email;
-            document.getElementById('password').value = '';
-            document.getElementById('passwordHint').style.display = 'block';
-            document.getElementById('password').removeAttribute('required');
-            document.getElementById('role').value = item.role;
-            document.getElementById('status').value = item.status;
+            clearFormErrors();
+            new bootstrap.Modal(document.getElementById('userModal')).show();
+        });
+    });
 
-            const modal = new bootstrap.Modal(document.getElementById('userModal'));
-            modal.show();
-        }
+    // ─── Delete Button ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            deleteUrl = this.dataset.url;
+            document.getElementById('deleteUserName').textContent = this.dataset.name;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        });
+    });
 
-        function showDeleteConfirm(id, name) {
-            deleteId = id;
-            document.getElementById('deleteItemName').textContent = name;
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            modal.show();
-        }
+    // ─── Toggle Status ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const url    = this.dataset.url;
+            const name   = this.dataset.name;
+            const btnEl  = this;
 
-        function deleteUser() {
-            if (deleteId === null) return;
+            btnEl.disabled = true;
 
-            const index = allData.findIndex(x => x.id === deleteId);
-            if (index > -1) {
-                const deletedItem = allData.splice(index, 1)[0];
-                currentData = allData;
-                renderTable(currentData);
-                
-                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                showToast(`${deletedItem.name} telah dihapus`, 'success');
-                
-                deleteId = null;
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toastId = 'toast-' + Date.now();
-
-            let icon = 'ℹ';
-            let iconClass = 'icon-info';
-            let toastClass = 'toast-info';
-
-            if (type === 'success') {
-                icon = '✓';
-                iconClass = 'icon-success';
-                toastClass = 'toast-success';
-            } else if (type === 'error') {
-                icon = '✕';
-                iconClass = 'icon-error';
-                toastClass = 'toast-error';
-            }
-
-            const toastHTML = `
-                <div id="${toastId}" class="toast ${toastClass}" role="alert">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="icon-circle ${iconClass}" style="flex-shrink: 0;">${icon}</div>
-                        <div class="flex-grow-1 pt-2">
-                            <div class="fw-semibold text-gray-900" style="font-size: 0.95rem;">${message}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            container.insertAdjacentHTML('beforeend', toastHTML);
-
-            const toastElement = document.getElementById(toastId);
-            setTimeout(() => {
-                toastElement.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => toastElement.remove(), 300);
-            }, 4000);
-        }
-
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = {
-                name: document.getElementById('nama').value,
-                nim_nip: document.getElementById('nimNip').value,
-                email: document.getElementById('email').value,
-                role: document.getElementById('role').value,
-                status: document.getElementById('status').value
-            };
-
-            if (editingId) {
-                const index = allData.findIndex(x => x.id === editingId);
-                if (index > -1) {
-                    allData[index] = { ...allData[index], ...formData };
-                    showToast(`${formData.name} telah diperbarui`, 'success');
-                    editingId = null;
+            fetch(url, {
+                method:  'PATCH',
+                headers: {
+                    'Accept':           'application/json',
+                    'X-CSRF-TOKEN':     CSRF,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const isActive = data.is_active;
+                    btnEl.textContent   = isActive ? 'Aktif' : 'Nonaktif';
+                    btnEl.dataset.active = isActive ? '1' : '0';
+                    btnEl.className = btnEl.className
+                        .replace(/btn-light-(success|danger)/, `btn-light-${isActive ? 'success' : 'danger'}`);
+                    showToast(`Status ${name} diubah ke ${data.label}`, 'success');
+                } else {
+                    showToast(data.error ?? 'Gagal mengubah status.', 'error');
                 }
+            })
+            .catch(() => showToast('Gagal terhubung ke server.', 'error'))
+            .finally(() => { btnEl.disabled = false; });
+        });
+    });
+
+    // ─── Form Submit ──────────────────────────────────────────────────────────────
+    document.getElementById('userForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        clearFormErrors();
+
+        const id     = document.getElementById('userId').value;
+        const method = document.getElementById('formMethod').value;
+        const url    = id
+            ? `{{ url('/master/pengguna') }}/${id}`
+            : '{{ route('dataPengguna.store') }}';
+
+        const payload = {
+            name:                  document.getElementById('inputName').value.trim(),
+            nim_nip:               document.getElementById('inputNimNip').value.trim(),
+            email:                 document.getElementById('inputEmail').value.trim(),
+            role:                  document.getElementById('inputRole').value,
+            is_active:             document.getElementById('inputStatus').value,
+            password:              document.getElementById('inputPassword').value,
+            password_confirmation: document.getElementById('inputPasswordConfirm').value,
+        };
+
+        // Remove password fields if edit mode & password is empty
+        if (isEditMode && !payload.password) {
+            delete payload.password;
+            delete payload.password_confirmation;
+        }
+
+        setSubmitLoading(true);
+
+        fetch(url, {
+            method:  method,
+            headers: {
+                'Content-Type':     'application/json',
+                'Accept':           'application/json',
+                'X-CSRF-TOKEN':     CSRF,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+        .then(({ ok, status, data }) => {
+            if (ok) {
+                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                showToast(data.message, 'success');
+                setTimeout(() => window.location.reload(), 800);
+            } else if (status === 422 && data.errors) {
+                showFormErrors(data.errors);
             } else {
-                const newId = Math.max(...allData.map(x => x.id), 0) + 1;
-                allData.unshift({ id: newId, ...formData });
-                showToast(`${formData.name} telah ditambahkan`, 'success');
+                showToast(data.message ?? 'Terjadi kesalahan.', 'error');
             }
-
-            currentData = allData;
-            renderTable(currentData);
-
-            this.reset();
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-        });
-
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            deleteUser();
-        });
-
-        document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('userForm').reset();
-            document.getElementById('modalTitle').textContent = 'Tambah Pengguna';
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            editingId = null;
-        });
-
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const query = e.target.value.toLowerCase();
-            const filtered = allData.filter(item =>
-                item.name.toLowerCase().includes(query) ||
-                item.email.toLowerCase().includes(query) ||
-                item.nim_nip.toLowerCase().includes(query)
-            );
-            currentData = filtered;
-            renderTable(currentData);
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            renderTable(allData);
-            currentData = allData;
-        });
-    </script>
-
-    <style>
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-        }
-    </style>
-@endpush
-
-@section('toolbar-actions')
-    <button type="button" class="btn btn-sm fw-bold btn-primary gap-2" data-bs-toggle="modal" data-bs-target="#userModal">
-        <span class="svg-icon svg-icon-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="white" />
-                <rect x="10.8891" y="5.25879" width="2.15616" height="12" fill="white" />
-                <path d="M5.4044 9.75879H19.2257C20.1957 9.75879 21.1957 10.4798 21.1957 11.4798V21.4798C21.1957 22.4798 20.1957 23.1799 19.2257 23.1799H5.4044C4.4344 23.1799 3.4344 22.4798 3.4344 21.4798V11.4798C3.4344 10.4798 4.4344 9.75879 5.4044 9.75879Z" fill="white" />
-            </svg>
-        </span>
-        Tambah Pengguna
-    </button>
-@endsection
-
-@section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card card-flush">
-                <div class="card-header py-4 d-flex align-items-center border-0">
-                    <input type="text" class="form-control form-control-solid" placeholder="Cari pengguna..." id="searchInput" style="max-width: 250px;">
-                </div>
-
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-borderless align-middle" style="margin-bottom: 0;">
-                            <thead class="bg-light-gray">
-                                <tr>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Nama Lengkap</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">NIM/NIP</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Email</th>
-                                    <th class="text-muted fw-bold fs-7 text-uppercase">Role</th>
-                                    <th style="width: 100px;" class="text-muted fw-bold fs-7 text-uppercase">Status</th>
-                                    <th style="width: 80px;" class="text-muted fw-bold fs-7 text-uppercase">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userTableBody" class="fs-6">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="emptyState" class="text-center py-8 d-none">
-                        <div class="mb-2 text-muted fs-6">Tidak ada data pengguna</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form id="userForm">
-                    <div class="modal-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Nama Lengkap</label>
-                            <input type="text" class="form-control form-control-lg" id="nama" placeholder="Toni Hermawan" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">NIM/NIP</label>
-                            <input type="text" class="form-control form-control-lg" id="nimNip" placeholder="210203001" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Email</label>
-                            <input type="email" class="form-control form-control-lg" id="email" placeholder="toni@kampus.ac.id" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Password</label>
-                            <input type="password" class="form-control form-control-lg" id="password" placeholder="••••••••" id="editMode" ? '' : 'required'>
-                            <small class="text-muted" id="passwordHint" style="display: none;">Kosongkan jika tidak ingin mengubah password</small>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Role</label>
-                            <select class="form-select form-select-lg" id="role" required>
-                                <option value="">Pilih Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="dosen">Dosen</option>
-                                <option value="mahasiswa">Mahasiswa</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Status</label>
-                            <select class="form-select form-select-lg" id="status" required>
-                                <option value="">Pilih Status</option>
-                                <option value="aktif">Aktif</option>
-                                <option value="nonaktif">Nonaktif</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Hapus Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <div class="icon-circle icon-warning" style="margin: 0 auto;">
-                            ⚠
-                        </div>
-                    </div>
-                    <p class="text-gray-700 text-center mb-0">
-                        Apakah Anda yakin ingin menghapus pengguna <strong id="deleteItemName"></strong>?
-                    </p>
-                    <p class="text-muted text-center fs-8 mt-2">Tindakan ini tidak dapat dibatalkan</p>
-                </div>
-
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    </div>
-@endsection
-
-@push('styles')
-    <style>
-        .table tbody tr {
-            transition: background-color 0.2s ease;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .table thead {
-            background-color: #f8f9fa;
-        }
-
-        .bg-light-gray {
-            background-color: #f8f9fa !important;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.4rem 0.8rem;
-            font-weight: 600;
-            border-radius: 4px;
-        }
-
-        .badge-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .badge-secondary {
-            background-color: #e7e7e7;
-            color: #666;
-        }
-
-        .badge-primary {
-            background-color: #cfe2ff;
-            color: #084298;
-        }
-
-        .badge-warning {
-            background-color: #fff3cd;
-            color: #664d03;
-        }
-
-        .btn-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-icon-sm {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-icon-edit {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .btn-icon-edit:hover {
-            background-color: #1976d2;
-            color: white;
-        }
-
-        .btn-icon-delete {
-            background-color: #ffebee;
-            color: #d32f2f;
-        }
-
-        .btn-icon-delete:hover {
-            background-color: #d32f2f;
-            color: white;
-        }
-
-        .toast {
-            background-color: white;
-            border-radius: 6px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-            border: none;
-            min-width: 340px;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast-success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast-error {
-            border-left: 4px solid #f44336;
-        }
-
-        .icon-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .icon-success {
-            background-color: #e8f5e9;
-            color: #4caf50;
-        }
-
-        .icon-error {
-            background-color: #ffebee;
-            color: #f44336;
-        }
-
-        .icon-warning {
-            background-color: #fff3e0;
-            color: #ff9800;
-        }
-
-        .modal-content {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .form-control-lg, .form-select-lg {
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-            padding: 0.65rem 1rem;
-            font-size: 0.95rem;
-        }
-
-        .form-control-lg:focus, .form-select-lg:focus {
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-        }
-
-        .form-label {
-            color: #333;
-        }
-
-        small {
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .btn-primary {
-            background-color: #1976d2;
-            border-color: #1976d2;
-        }
-
-        .btn-primary:hover {
-            background-color: #1565c0;
-            border-color: #1565c0;
-        }
-
-        .btn-danger {
-            background-color: #d32f2f;
-            border-color: #d32f2f;
-        }
-
-        .btn-danger:hover {
-            background-color: #c62828;
-            border-color: #c62828;
-        }
-
-        .btn-light {
-            background-color: #f5f5f5;
-            border-color: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-light:hover {
-            background-color: #eeeeee;
-        }
-
-        .text-muted {
-            color: #999 !important;
-        }
-
-        .table td {
-            padding: 12px 16px;
-            vertical-align: middle;
-        }
-
-        .table th {
-            padding: 12px 16px;
-            font-weight: 700;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-        }
-
-        .text-gray-700 {
-            color: #555;
-        }
-
-        .fs-8 {
-            font-size: 0.75rem !important;
-        }
-
-        .text-primary {
-            color: #1976d2 !important;
-        }
-
-        .text-gray-600 {
-            color: #666 !important;
-        }
-
-        .text-gray-900 {
-            color: #333 !important;
-        }
-    </style>
-@endpush
-
-@push('scripts')
-    <script>
-        let editingId = null;
-        let deleteId = null;
-        let currentData = [];
-        let allData = [
-            {
-                id: 1,
-                name: 'Admin User',
-                nim_nip: 'ADM001',
-                email: 'admin@kampus.ac.id',
-                role: 'admin',
-                status: 'aktif'
+        })
+        .catch(() => showToast('Gagal terhubung ke server.', 'error'))
+        .finally(() => setSubmitLoading(false));
+    });
+
+    // ─── Confirm Delete ───────────────────────────────────────────────────────────
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (!deleteUrl) return;
+
+        setDeleteLoading(true);
+
+        fetch(deleteUrl, {
+            method:  'DELETE',
+            headers: {
+                'Accept':           'application/json',
+                'X-CSRF-TOKEN':     CSRF,
+                'X-Requested-With': 'XMLHttpRequest',
             },
-            {
-                id: 2,
-                name: 'Dr. Santoso, M.Kom',
-                nim_nip: 'NIP1001',
-                email: 'santoso@kampus.ac.id',
-                role: 'dosen',
-                status: 'aktif'
-            },
-            {
-                id: 3,
-                name: 'Ir. Rina, M.T',
-                nim_nip: 'NIP1002',
-                email: 'rina@kampus.ac.id',
-                role: 'dosen',
-                status: 'aktif'
-            },
-            {
-                id: 4,
-                name: 'Toni Hermawan',
-                nim_nip: '210203001',
-                email: 'toni@kampus.ac.id',
-                role: 'mahasiswa',
-                status: 'aktif'
-            },
-            {
-                id: 5,
-                name: 'Siti Nurhaliza',
-                nim_nip: '210203002',
-                email: 'siti@kampus.ac.id',
-                role: 'mahasiswa',
-                status: 'nonaktif'
-            }
-        ];
-
-        function getRoleBadge(role) {
-            const roles = {
-                'admin': { color: 'primary', text: 'Admin' },
-                'dosen': { color: 'warning', text: 'Dosen' },
-                'mahasiswa': { color: 'secondary', text: 'Mahasiswa' }
-            };
-            return roles[role] || { color: 'secondary', text: role };
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('userTableBody');
-            const emptyState = document.getElementById('emptyState');
-
-            if (data.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('d-none');
-                return;
-            }
-
-            emptyState.classList.add('d-none');
-            tbody.innerHTML = data.map((item) => {
-                const roleBadge = getRoleBadge(item.role);
-                return `
-                    <tr>
-                        <td><span class="fw-bold text-primary">${item.name}</span></td>
-                        <td><span class="text-gray-600">${item.nim_nip}</span></td>
-                        <td><span class="text-gray-600">${item.email}</span></td>
-                        <td><span class="badge badge-${roleBadge.color}">${roleBadge.text}</span></td>
-                        <td>
-                            <span class="badge ${item.status === 'aktif' ? 'badge-success' : 'badge-secondary'}">
-                                ${item.status === 'aktif' ? '✓ Aktif' : '○ Nonaktif'}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="btn-actions">
-                                <button type="button" class="btn-icon-sm btn-icon-edit" onclick="editUser(${item.id})" title="Edit">
-                                    ✎
-                                </button>
-                                <button type="button" class="btn-icon-sm btn-icon-delete" onclick="showDeleteConfirm(${item.id}, '${item.name}')" title="Hapus">
-                                    ✕
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function editUser(id) {
-            const item = allData.find(x => x.id === id);
-            if (!item) return;
-
-            editingId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Pengguna';
-            document.getElementById('nama').value = item.name;
-            document.getElementById('nimNip').value = item.nim_nip;
-            document.getElementById('email').value = item.email;
-            document.getElementById('password').value = '';
-            document.getElementById('passwordHint').style.display = 'block';
-            document.getElementById('password').removeAttribute('required');
-            document.getElementById('role').value = item.role;
-            document.getElementById('status').value = item.status;
-
-            const modal = new bootstrap.Modal(document.getElementById('userModal'));
-            modal.show();
-        }
-
-        function showDeleteConfirm(id, name) {
-            deleteId = id;
-            document.getElementById('deleteItemName').textContent = name;
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            modal.show();
-        }
-
-        function deleteUser() {
-            if (deleteId === null) return;
-
-            const index = allData.findIndex(x => x.id === deleteId);
-            if (index > -1) {
-                const deletedItem = allData.splice(index, 1)[0];
-                currentData = allData;
-                renderTable(currentData);
-                
-                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                showToast(`${deletedItem.name} telah dihapus`, 'success');
-                
-                deleteId = null;
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toastId = 'toast-' + Date.now();
-
-            let icon = 'ℹ';
-            let iconClass = 'icon-info';
-            let toastClass = 'toast-info';
-
-            if (type === 'success') {
-                icon = '✓';
-                iconClass = 'icon-success';
-                toastClass = 'toast-success';
-            } else if (type === 'error') {
-                icon = '✕';
-                iconClass = 'icon-error';
-                toastClass = 'toast-error';
-            }
-
-            const toastHTML = `
-                <div id="${toastId}" class="toast ${toastClass}" role="alert">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="icon-circle ${iconClass}" style="flex-shrink: 0;">${icon}</div>
-                        <div class="flex-grow-1 pt-2">
-                            <div class="fw-semibold text-gray-900" style="font-size: 0.95rem;">${message}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            container.insertAdjacentHTML('beforeend', toastHTML);
-
-            const toastElement = document.getElementById(toastId);
-            setTimeout(() => {
-                toastElement.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => toastElement.remove(), 300);
-            }, 4000);
-        }
-
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = {
-                name: document.getElementById('nama').value,
-                nim_nip: document.getElementById('nimNip').value,
-                email: document.getElementById('email').value,
-                role: document.getElementById('role').value,
-                status: document.getElementById('status').value
-            };
-
-            if (editingId) {
-                const index = allData.findIndex(x => x.id === editingId);
-                if (index > -1) {
-                    allData[index] = { ...allData[index], ...formData };
-                    showToast(`${formData.name} telah diperbarui`, 'success');
-                    editingId = null;
-                }
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+            if (ok) {
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                showToast(data.message, 'success');
+                setTimeout(() => window.location.reload(), 800);
             } else {
-                const newId = Math.max(...allData.map(x => x.id), 0) + 1;
-                allData.unshift({ id: newId, ...formData });
-                showToast(`${formData.name} telah ditambahkan`, 'success');
+                showToast(data.message ?? 'Gagal menghapus pengguna.', 'error');
             }
+        })
+        .catch(() => showToast('Gagal terhubung ke server.', 'error'))
+        .finally(() => setDeleteLoading(false));
+    });
 
-            currentData = allData;
-            renderTable(currentData);
+    // ─── Reset Modal on Close ─────────────────────────────────────────────────────
+    document.getElementById('userModal').addEventListener('hidden.bs.modal', function () {
+        isEditMode = false;
+        document.getElementById('userForm').reset();
+        document.getElementById('userId').value       = '';
+        document.getElementById('formMethod').value   = 'POST';
+        document.getElementById('modalTitle').textContent = 'Tambah Pengguna';
+        document.getElementById('passwordHint').classList.add('d-none');
+        document.getElementById('passwordRequired').classList.remove('d-none');
+        document.getElementById('passwordConfirmRequired').classList.remove('d-none');
+        clearFormErrors();
+    });
 
-            this.reset();
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+    // ─── Helpers ──────────────────────────────────────────────────────────────────
+    function showFormErrors(errors) {
+        const alert = document.getElementById('formErrorAlert');
+        const list  = document.getElementById('formErrorList');
+
+        list.innerHTML = Object.values(errors).flat()
+            .map(m => `<li>${m}</li>`).join('');
+        alert.classList.remove('d-none');
+        alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        const map = {
+            name:      'inputName',
+            nim_nip:   'inputNimNip',
+            email:     'inputEmail',
+            password:  'inputPassword',
+            role:      'inputRole',
+            is_active: 'inputStatus',
+        };
+
+        Object.entries(errors).forEach(([field, messages]) => {
+            const inputId = map[field];
+            if (!inputId) return;
+            const input = document.getElementById(inputId);
+            const errEl = document.getElementById(field.replace('_', '') + 'Error')
+                       ?? document.getElementById(inputId + 'Error');
+            if (input)  input.classList.add('is-invalid');
+            if (errEl)  errEl.textContent = messages[0];
         });
+    }
 
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            deleteUser();
+    function clearFormErrors() {
+        document.getElementById('formErrorAlert').classList.add('d-none');
+        document.getElementById('formErrorList').innerHTML = '';
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        ['nameError', 'nimNipError', 'emailError', 'passwordError',
+         'roleError', 'isActiveError'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '';
         });
+    }
 
-        document.getElementById('userModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('userForm').reset();
-            document.getElementById('modalTitle').textContent = 'Tambah Pengguna';
-            document.getElementById('passwordHint').style.display = 'none';
-            document.getElementById('password').setAttribute('required', '');
-            editingId = null;
-        });
+    function setSubmitLoading(on) {
+        const btn = document.getElementById('submitBtn');
+        btn.querySelector('.indicator-label').classList.toggle('d-none', on);
+        btn.querySelector('.indicator-progress').classList.toggle('d-none', !on);
+        btn.disabled = on;
+    }
 
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const query = e.target.value.toLowerCase();
-            const filtered = allData.filter(item =>
-                item.name.toLowerCase().includes(query) ||
-                item.email.toLowerCase().includes(query) ||
-                item.nim_nip.toLowerCase().includes(query)
-            );
-            currentData = filtered;
-            renderTable(currentData);
-        });
+    function setDeleteLoading(on) {
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.querySelector('.indicator-label').classList.toggle('d-none', on);
+        btn.querySelector('.indicator-progress').classList.toggle('d-none', !on);
+        btn.disabled = on;
+    }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            renderTable(allData);
-            currentData = allData;
-        });
-    </script>
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const id    = 'toast-' + Date.now();
+        const color = type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary';
+        const icon  = type === 'success' ? 'ki-check-circle'
+                    : type === 'error'   ? 'ki-cross-circle'
+                    : 'ki-information-5';
 
-    <style>
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-        }
-    </style>
+        container.insertAdjacentHTML('beforeend', `
+            <div id="${id}" class="toast show align-items-center text-bg-${color} border-0 mb-2" role="alert">
+                <div class="d-flex align-items-center gap-3 p-3">
+                    <i class="ki-outline ${icon} fs-2 text-white"></i>
+                    <div class="me-auto fw-semibold fs-6">${message}</div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `);
+
+        setTimeout(() => document.getElementById(id)?.remove(), 4500);
+    }
+</script>
 @endpush
