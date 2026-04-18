@@ -7,12 +7,19 @@ use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\KrsController;
 use App\Http\Controllers\Api\V1\KhsController;
 use App\Http\Controllers\Api\V1\ClassController;
+use App\Http\Controllers\Api\V1\RuanganController;
+use App\Http\Controllers\APi\v1\UserController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
+        Route::get('/pa/krs-request', [KrsController::class, 'daftarKrsMahasiswa']);
+
+Route::get('/ruangan', [RuanganController::class, 'daftarRuangan']);
+Route::get('/ruangan/{id}', [RuanganController::class, 'detailRuangan']);
+Route::get('/pa/krs-request', [KrsController::class, 'daftarKrsMahasiswa']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -24,19 +31,19 @@ Route::middleware('auth:sanctum')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::get('/courses', [CourseController::class, 'daftarMataKuliah'])
-            ->middleware('permission:view matkul');
+            ->middleware('can:matkul.view');
 
         Route::get('/courses/{id}', [CourseController::class, 'melihatMataKuliah'])
-            ->middleware('permission:view matkul');
+            ->middleware('can:matkul.view');
 
         Route::post('/courses', [CourseController::class, 'membuatMataKuliah'])
-            ->middleware('permission:create matkul');
+            ->middleware('can:matkul.create');
 
         Route::put('/courses/{id}', [CourseController::class, 'mengubahMataKuliah'])
-            ->middleware('permission:edit matkul');
+            ->middleware('can:matkul.edit');
 
         Route::delete('/courses/{id}', [CourseController::class, 'menghapusMataKuliah'])
-            ->middleware('permission:delete matkul');
+            ->middleware('can:matkul.delete');
 
 
         /*
@@ -45,16 +52,16 @@ Route::middleware('auth:sanctum')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::get('/pa/krs-request', [KrsController::class, 'daftarKrsMahasiswa'])
-            ->middleware('permission:approve krs');
+            ->middleware('can:krs.view');
 
         Route::put('/krs/{id}/approve', [KrsController::class, 'approveKrs'])
-            ->middleware('permission:approve krs');
+            ->middleware('can:krs.approve');
 
         Route::put('/krs/{id}/reject', [KrsController::class, 'tolakKrs'])
-            ->middleware('permission:approve krs');
+            ->middleware('can:krs.reject');
 
         Route::get('/krs/active', [KrsController::class, 'melihatKrsAktif'])
-            ->middleware('permission:view krs');
+            ->middleware('can:krs.view');
 
 
         /*
@@ -63,10 +70,10 @@ Route::middleware('auth:sanctum')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::put('/khs/publish', [KhsController::class, 'publishNilai'])
-            ->middleware('permission:publish nilai');
+            ->middleware('can:khs.publish');
 
         Route::get('/khs/{semester}', [KhsController::class, 'lihatKhs'])
-            ->middleware('permission:view khs');
+            ->middleware('can:khs.view');
 
 
         /*
@@ -75,9 +82,35 @@ Route::middleware('auth:sanctum')->group(function () {
         |--------------------------------------------------------------------------
         */
         Route::get('/classes', [ClassController::class, 'jadwalKelas'])
-            ->middleware('permission:view kelas');
+            ->middleware('can:kelas.view');
 
         Route::post('/classes', [ClassController::class, 'membuatKelas'])
-            ->middleware('permission:manage kelas');
+            ->middleware('can:kelas.create');
+
+        Route::get('/classes/{id}', [ClassController::class, 'show'])
+            ->middleware('can:kelas.view');
+
+        Route::put('/classes/{id}', [ClassController::class, 'update'])
+            ->middleware('can:kelas.edit');
+
+        Route::delete('/classes/{id}', [ClassController::class, 'destroy'])
+            ->middleware('can:kelas.delete');
+
+        /*
+        |--------------------------------------------------------------------------
+        | RUANGAN 
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/ruangan', [RuanganController::class, 'daftarRuangan'])
+            ->middleware('can:ruangan.view');
+        Route::post('/ruangan', [RuanganController::class, 'store'])
+            ->middleware('can:ruangan.create');
+        Route::get('/ruangan/{id}', [RuanganController::class, 'detailRuangan'])
+            ->middleware('can:ruangan.view');
+        Route::put('/ruangan/{id}', [RuanganController::class, 'update'])
+            ->middleware('can:ruangan.edit');
+        Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])
+            ->middleware('can:ruangan.delete');
+        Route::get('/lecturers', [UserController::class, 'listDosen']);
     });
 });

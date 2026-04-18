@@ -41,6 +41,7 @@
                     class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6"
                     data-kt-menu="true">
 
+                    {{-- DASHBOARD --}}
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
                             href="{{ route('dashboard') }}">
@@ -53,11 +54,12 @@
 
                     <div class="menu-item pt-5">
                         <div class="menu-content">
-                            <span class="menu-heading fw-bold text-uppercase fs-7">Menu</span>
+                            <span class="menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
                         </div>
                     </div>
 
-                    @canany(['manage users','manage roles','manage sidebar','view matkul','create kelas','edit kelas','delete kelas'])
+                    {{-- MASTER DATA GROUP --}}
+                    @canany(['users.manage', 'roles.manage', 'sidebar.manage', 'matkul.view', 'kelas.view'])
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ request()->routeIs('master.*') || request()->routeIs('dataPengguna') || request()->routeIs('manajemenRole') || request()->routeIs('manajemenSidebar') || request()->routeIs('dataMatkul') || request()->routeIs('dataKelas') ? 'here show' : '' }}">
 
@@ -70,8 +72,7 @@
                         </span>
 
                         <div class="menu-sub menu-sub-accordion">
-
-                            @can('manage users')
+                            @can('users.manage')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('dataPengguna') ? 'active' : '' }}"
                                     href="{{ route('dataPengguna') }}">
@@ -81,7 +82,7 @@
                             </div>
                             @endcan
 
-                            @can('manage roles')
+                            @can('roles.manage')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('manajemenRole') ? 'active' : '' }}"
                                     href="{{ route('manajemenRole') }}">
@@ -91,7 +92,7 @@
                             </div>
                             @endcan
 
-                            @can('manage sidebar')
+                            @can('sidebar.manage')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('manajemenSidebar') ? 'active' : '' }}"
                                     href="{{ route('manajemenSidebar') }}">
@@ -101,7 +102,7 @@
                             </div>
                             @endcan
 
-                            @can('view matkul')
+                            @can('matkul.view')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('dataMatkul') ? 'active' : '' }}"
                                     href="{{ route('dataMatkul') }}">
@@ -111,7 +112,7 @@
                             </div>
                             @endcan
 
-                            @canany(['create kelas','edit kelas','delete kelas'])
+                            @can('kelas.view')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('dataKelas') ? 'active' : '' }}"
                                     href="{{ route('dataKelas') }}">
@@ -119,14 +120,23 @@
                                     <span class="menu-title">Manajemen Kelas Aktif</span>
                                 </a>
                             </div>
-                            @endcanany
-
+                            @endcan
+                            
+                            @can('ruangan.view')
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('manajemenRuangan') ? 'active' : '' }}"
+                                    href="{{ route('manajemenRuangan') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Manajemen Ruangan</span>
+                                </a>
+                            </div>
+                            @endcan
                         </div>
                     </div>
                     @endcanany
 
-
-                    @canany(['approve krs','input nilai','publish nilai'])
+                    {{-- AKADEMIK (DOSEN/ADMIN) GROUP --}}
+                    @canany(['krs.approve', 'nilai.input', 'nilai.publish'])
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ request()->routeIs('akademik.*') ? 'here show' : '' }}">
 
@@ -139,8 +149,7 @@
                         </span>
 
                         <div class="menu-sub menu-sub-accordion">
-
-                            @can('approve krs')
+                            @can('krs.approve')
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('akademik.krs.*') ? 'active' : '' }}"
                                     href="#">
@@ -150,7 +159,7 @@
                             </div>
                             @endcan
 
-                            @canany(['input nilai','publish nilai'])
+                            @canany(['nilai.input', 'nilai.publish'])
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->routeIs('akademik.nilai.*') ? 'active' : '' }}"
                                     href="#">
@@ -159,14 +168,55 @@
                                 </a>
                             </div>
                             @endcanany
-
                         </div>
                     </div>
                     @endcanany
 
+                    {{-- MAHASISWA SECTION --}}
+                    @canany(['krs.view', 'kelas.view'])
+                    <div class="menu-item pt-5">
+                        <div class="menu-content">
+                            <span class="menu-heading fw-bold text-uppercase fs-7">Mahasiswa</span>
+                        </div>
+                    </div>
 
-                    
-                    @can('view profile')
+                    <div data-kt-menu-trigger="click"
+                        class="menu-item menu-accordion {{ request()->routeIs('krsMahasiswa') || request()->routeIs('kelasSaya') ? 'here show' : '' }}">
+
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <i class="ki-outline ki-book fs-2"></i>
+                            </span>
+                            <span class="menu-title">Akademik Saya</span>
+                            <span class="menu-arrow"></span>
+                        </span>
+
+                        <div class="menu-sub menu-sub-accordion">
+                            @can('krs.view')
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('krsMahasiswa') ? 'active' : '' }}"
+                                    href="{{ route('krsMahasiswa') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Kartu Rencana Studi</span>
+                                </a>
+                            </div>
+                            @endcan
+
+                            @can('kelas.view')
+                            <div class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('kelasSaya') ? 'active' : '' }}"
+                                    href="{{ route('kelasSaya') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Kelas Saya</span>
+                                </a>
+                            </div>
+                            @endcan
+                        </div>
+                    </div>
+                    @endcanany
+
+                    {{-- PROFIL AKUN --}}
+                    @can('profile.view')
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
                             href="#">

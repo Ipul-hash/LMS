@@ -3,13 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; 
 
 class Kelas extends Model
 {
     protected $table = 'kelas';
 
     protected $fillable = [
-        'matkul_id', 'dosen_id', 'nama_kelas', 'kapasitas', 'periode_semester'
+        'matkul_id', 
+        'dosen_id', 
+        'nama_kelas', 
+        'kapasitas', 
+        'periode_semester',
+        'ruangan_id',
+        'hari',       
+        'jam_mulai',  
+        'jam_selesai' 
     ];
 
     public function mataKuliah()
@@ -30,5 +39,9 @@ class Kelas extends Model
     public function detailKrs()
     {
         return $this->hasMany(DetailKrs::class, 'kelas_id');
+    }
+    public function ruangan(): BelongsTo
+    {
+        return $this->belongsTo(Ruangan::class);
     }
 }

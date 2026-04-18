@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 
     // Master Data - Data Pengguna (User CRUD)
-    Route::prefix('/master/pengguna')->middleware('can:manage users')->group(function () {
+    Route::prefix('/master/pengguna')->middleware('can:users.manage')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('dataPengguna');
         Route::post('/', [UserController::class, 'store'])->name('dataPengguna.store');
         Route::get('/{user}', [UserController::class, 'show'])->name('dataPengguna.show');
@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Master Data - Manajemen Role (Role CRUD)
-    Route::prefix('/master/role')->middleware('can:manage roles')->group(function () {
+    Route::prefix('/master/role')->middleware('can:roles.manage')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('manajemenRole');
         Route::post('/', [RoleController::class, 'store'])->name('manajemenRole.store');
         Route::get('/{role}', [RoleController::class, 'show'])->name('manajemenRole.show');
@@ -51,19 +51,31 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{role}', [RoleController::class, 'destroy'])->name('manajemenRole.destroy');
     });
 
+    Route::get('/krs', [PageController::class, 'krsMahasiswa'])
+    ->middleware('can:krs.view')
+    ->name('krsMahasiswa');
+
+    Route::get('/kelas-saya', [PageController::class, 'kelasSaya'])
+        ->middleware('can:kelas.view')
+        ->name('kelasSaya');
+    
     // Master Data - Data Mata Kuliah
     Route::get('/data-matkul', [PageController::class, 'dataMatkul'])
-        ->middleware('permission:view matkul')
+        ->middleware('permission:matkul.view')
         ->name('dataMatkul');
+    
+        Route::get('/data-ruangan', [PageController::class, 'manajemenRuangan'])
+        ->middleware('permission:ruangan.view')
+        ->name('manajemenRuangan');
 
     // Master Data - Data Kelas
     Route::get('/data-kelas', [PageController::class, 'dataKelas'])
-        ->middleware('permission:create kelas|edit kelas|delete kelas')
+        ->middleware('permission:kelas.create|kelas.edit|kelas.delete')
         ->name('dataKelas');
 
     // Master Data - Manajemen Sidebar
     Route::get('/manajemen-sidebar', [PageController::class, 'manajemenSidebar'])
-        ->middleware('permission:manage sidebar')
+        ->middleware('permission:sidebar.manage')
         ->name('manajemenSidebar');
 
 });

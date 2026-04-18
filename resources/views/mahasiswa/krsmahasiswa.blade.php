@@ -596,9 +596,7 @@
 
 @push('scripts')
 <script>
-// =============================================
-//  DUMMY DATA
-// =============================================
+
 
 const dummyKRS = [
     { id: 1, kode: 'INF-22201', nama: 'Aljabar Linear dan Matriks', sks: 3, kelas: 'Reguler Sore C B', jadwal: 'Jumat, 20:00 - 21:30 PE01', status: 'Disetujui' },
@@ -625,9 +623,7 @@ const dummySemuaKelas = [
     { id: 12, kode: 'INF-22212', nama: 'Kecerdasan Buatan',          sks: 3, smt: 4, kelas: 'Reguler Sore C B', jadwal: 'Sabtu, 18:00 - 19:40 PE01',        dosen: 'Dr. Lina Setiani, M.Kom',   sudahDipilih: false },
 ];
 
-// =============================================
-//  TAB SWITCH
-// =============================================
+
 function switchTab(tab) {
     const isKRS = tab === 'krs';
     document.getElementById('tabKRS').classList.toggle('active', isKRS);
@@ -637,9 +633,7 @@ function switchTab(tab) {
     if (!isKRS) renderKelasTable(dummySemuaKelas);
 }
 
-// =============================================
-//  RENDER KRS TABLE
-// =============================================
+
 function renderKRSTable() {
     const tbody = document.getElementById('krsTableBody');
     tbody.innerHTML = dummyKRS.map((m, i) => `
@@ -668,9 +662,7 @@ function statusBadge(status) {
     return `<span class="krs-badge ${map[status] || ''}">${status}</span>`;
 }
 
-// =============================================
-//  RENDER DATA KELAS TABLE
-// =============================================
+
 function renderKelasTable(data) {
     const tbody = document.getElementById('kelasTableBody');
     tbody.innerHTML = data.map((m, i) => `
@@ -703,16 +695,11 @@ function filterKelas() {
     renderKelasTable(filtered);
 }
 
-// =============================================
-//  CHECK ALL
-// =============================================
+
 function toggleAll(cb) {
     document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
 }
 
-// =============================================
-//  INIT
-// =============================================
 renderKRSTable();
 </script>
 @endpush

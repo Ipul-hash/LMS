@@ -28,642 +28,758 @@
     <div class="row">
         <div class="col-12">
             <div class="card card-flush">
-                <div class="card-header py-4 d-flex align-items-center border-0">
-                    <input type="text" class="form-control form-control-solid" placeholder="Cari kelas..." id="searchInput" style="max-width: 250px;">
+                <div class="card-header py-4 d-flex align-items-center border-0 gap-2 flex-wrap">
+                    <div class="search-wrapper">
+                        <span class="search-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <circle cx="11" cy="11" r="8" stroke="#999" stroke-width="2"/>
+                                <path d="M21 21L16.65 16.65" stroke="#999" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <input type="text" class="form-control form-control-solid search-input"
+                            placeholder="Cari nama kelas atau mata kuliah..." id="searchInput">
+                    </div>
+                    <select class="form-select form-select-solid filter-select" id="filterHari">
+                        <option value="">Semua Hari</option>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                        <option value="Sabtu">Sabtu</option>
+                    </select>
+                    <select class="form-select form-select-solid filter-select" id="filterPeriode">
+                        <option value="">Semua Periode</option>
+                    </select>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body pt-0">
                     <div class="table-responsive">
-                        <table class="table table-borderless align-middle" style="margin-bottom: 0;">
+                        <table class="table table-borderless align-middle">
                             <thead class="bg-light-gray">
                                 <tr>
                                     <th class="text-muted fw-bold fs-7 text-uppercase">Nama Kelas</th>
                                     <th class="text-muted fw-bold fs-7 text-uppercase">Mata Kuliah</th>
-                                    <th style="width: 80px;" class="text-muted fw-bold fs-7 text-uppercase">Kapasitas</th>
+                                    <th class="text-muted fw-bold fs-7 text-uppercase">Dosen</th>
+                                    <th class="text-muted fw-bold fs-7 text-uppercase">Jadwal</th>
+                                    <th class="text-muted fw-bold fs-7 text-uppercase">Ruangan</th>
+                                    <th style="width:100px" class="text-muted fw-bold fs-7 text-uppercase">Kapasitas</th>
                                     <th class="text-muted fw-bold fs-7 text-uppercase">Periode</th>
-                                    <th style="width: 100px;" class="text-muted fw-bold fs-7 text-uppercase">Status</th>
-                                    <th style="width: 80px;" class="text-muted fw-bold fs-7 text-uppercase">Aksi</th>
+                                    <th style="width:90px" class="text-muted fw-bold fs-7 text-uppercase">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="kelasTableBody" class="fs-6">
-                            </tbody>
+                            <tbody id="kelasTableBody" class="fs-6"></tbody>
                         </table>
                     </div>
-                    <div id="emptyState" class="text-center py-8 d-none">
-                        <div class="mb-2 text-muted fs-6">Tidak ada data kelas</div>
+                    <div id="emptyState" class="empty-state d-none">
+                        <div class="empty-state__icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                <path d="M17 20H7C5.9 20 5 19.1 5 18V8L9 4H17C18.1 4 19 4.9 19 6V18C19 19.1 18.1 20 17 20Z" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 4V8H5" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12H15M9 16H13" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="empty-state__title">Tidak ada data kelas</div>
+                        <div class="empty-state__subtitle" id="emptySubtitle">Mulai dengan menambahkan kelas baru</div>
+                    </div>
+                    <div id="loadingState" class="loading-state">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span class="text-muted">Memuat data kelas...</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Add / Edit Modal --}}
     <div class="modal fade" id="kelasModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold" id="modalTitle">Tambah Kelas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form id="kelasForm">
+                <form id="kelasForm" novalidate>
                     <div class="modal-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Nama Kelas</label>
-                            <input type="text" class="form-control form-control-lg" id="namaKelas" placeholder="Contoh: Kelas A" required>
+
+                        {{-- Row 1: Nama Kelas + Kapasitas --}}
+                        <div class="row g-3 mb-4">
+                            <div class="col-8">
+                                <label class="form-label fw-semibold mb-2">Nama Kelas <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-lg" id="namaKelas"
+                                    placeholder="Contoh: Kelas A" required maxlength="100">
+                                <div class="invalid-feedback">Nama kelas wajib diisi</div>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label fw-semibold mb-2">Kapasitas <span class="text-danger">*</span></label>
+                                <div class="input-group input-group-lg">
+                                    <input type="number" class="form-control" id="kapasitas"
+                                        min="1" max="500" placeholder="40" required>
+                                    <span class="input-group-text text-muted fs-7">org</span>
+                                </div>
+                                <div class="invalid-feedback">Kapasitas wajib diisi</div>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Mata Kuliah</label>
-                            <select class="form-select form-select-lg" id="matkulId" required>
-                                <option value="">Pilih Mata Kuliah</option>
-                            </select>
+                        {{-- Row 2: Mata Kuliah + Dosen --}}
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold mb-2">Mata Kuliah <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-lg" id="matkulId" required>
+                                    <option value="">Pilih Mata Kuliah</option>
+                                </select>
+                                <div class="invalid-feedback">Mata kuliah wajib dipilih</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold mb-2">Dosen Pengampu <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-lg" id="dosenId" required>
+                                    <option value="">Pilih Dosen</option>
+                                </select>
+                                <div class="invalid-feedback">Dosen wajib dipilih</div>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Kapasitas</label>
-                            <input type="number" class="form-control form-control-lg" id="kapasitas" min="1" max="100" placeholder="40" required>
+                        {{-- Row 3: Ruangan + Periode --}}
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold mb-2">Ruangan <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-lg" id="ruanganId" required>
+                                    <option value="">Pilih Ruangan</option>
+                                </select>
+                                <div class="invalid-feedback">Ruangan wajib dipilih</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold mb-2">Periode Semester <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-lg" id="periode"
+                                    placeholder="Contoh: 2026/Ganjil" required maxlength="20">
+                                <div class="invalid-feedback">Periode semester wajib diisi</div>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Periode Semester</label>
-                            <input type="text" class="form-control form-control-lg" id="periode" placeholder="Contoh: 2026/Ganjil" required>
+                        {{-- Row 4: Hari + Jam Mulai + Jam Selesai --}}
+                        <div class="schedule-box">
+                            <div class="schedule-box__label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Jadwal Perkuliahan
+                            </div>
+                            <div class="row g-3 mt-1">
+                                <div class="col-4">
+                                    <label class="form-label fw-semibold mb-2">Hari <span class="text-danger">*</span></label>
+                                    <select class="form-select form-select-lg" id="hari" required>
+                                        <option value="">Pilih Hari</option>
+                                        <option value="Senin">Senin</option>
+                                        <option value="Selasa">Selasa</option>
+                                        <option value="Rabu">Rabu</option>
+                                        <option value="Kamis">Kamis</option>
+                                        <option value="Jumat">Jumat</option>
+                                        <option value="Sabtu">Sabtu</option>
+                                    </select>
+                                    <div class="invalid-feedback">Hari wajib dipilih</div>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label fw-semibold mb-2">Jam Mulai <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control form-control-lg" id="jamMulai" required>
+                                    <div class="invalid-feedback">Jam mulai wajib diisi</div>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label fw-semibold mb-2">Jam Selesai <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control form-control-lg" id="jamSelesai" required>
+                                    <div class="invalid-feedback">Jam selesai wajib diisi</div>
+                                </div>
+                            </div>
+                            <div id="jadwalConflictWarning" class="jadwal-warning d-none">
+                                ⚠ Jam selesai harus lebih dari jam mulai
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">Status</label>
-                            <select class="form-select form-select-lg" id="status" required>
-                                <option value="">Pilih Status</option>
-                                <option value="aktif">Aktif</option>
-                                <option value="nonaktif">Nonaktif</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div class="modal-footer border-top-0 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span id="submitText">Simpan</span>
+                            <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    {{-- Delete Confirm Modal --}}
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold">Hapus Kelas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <div class="icon-circle icon-warning" style="margin: 0 auto;">
-                            ⚠
-                        </div>
-                    </div>
-                    <p class="text-gray-700 text-center mb-0">
-                        Apakah Anda yakin ingin menghapus <strong id="deleteItemName"></strong>?
+                <div class="modal-body text-center py-2">
+                    <div class="icon-circle icon-warning mx-auto mb-3">⚠</div>
+                    <p class="text-gray-700 mb-1">
+                        Apakah Anda yakin ingin menghapus<br>
+                        <strong id="deleteItemName" class="text-dark"></strong>?
                     </p>
-                    <p class="text-muted text-center fs-8 mt-2">Tindakan ini tidak dapat dibatalkan</p>
+                    <p class="text-muted fs-8 mt-2">Tindakan ini tidak dapat dibatalkan</p>
                 </div>
-
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
+                <div class="modal-footer border-top-0 justify-content-center gap-2">
+                    <button type="button" class="btn btn-light px-5" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger px-5" id="confirmDeleteBtn">
+                        <span id="deleteText">Hapus</span>
+                        <span id="deleteSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    </div>
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;"></div>
 @endsection
 
 @push('styles')
-    <style>
-        .table tbody tr {
-            transition: background-color 0.2s ease;
-            border-bottom: 1px solid #f0f0f0;
-        }
+<style>
+    /* ── Search & Filter ──────────────────────────── */
+    .search-wrapper { position: relative; }
+    .search-icon {
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%); pointer-events: none; display: flex;
+    }
+    .search-input { padding-left: 38px !important; min-width: 280px; }
+    .filter-select { min-width: 150px; border-radius: 6px !important; font-size: .875rem; }
 
-        .table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
+    /* ── Table ────────────────────────────────────── */
+    .table thead { background-color: #f8f9fa; }
+    .table thead th { padding: 12px 14px; font-weight: 700; border-bottom: 0; }
+    .table tbody tr { border-bottom: 1px solid #f2f2f2; transition: background-color .15s; }
+    .table tbody tr:hover { background-color: #fafbfc; }
+    .table tbody tr:last-child { border-bottom: 0; }
+    .table tbody td { padding: 12px 14px; vertical-align: middle; }
 
-        .table thead {
-            background-color: #f8f9fa;
-        }
+    /* ── Badges ───────────────────────────────────── */
+    .badge { font-size: .73rem; padding: .35rem .7rem; font-weight: 600; border-radius: 4px; }
+    .badge-light-primary   { background: #e7f1ff; color: #0052cc; }
+    .badge-light-success   { background: #d4edda; color: #155724; }
+    .badge-light-warning   { background: #fff3cd; color: #856404; }
+    .badge-light-info      { background: #d1ecf1; color: #0c5460; }
+    .badge-light-secondary { background: #e7e7e7; color: #666; }
 
-        .bg-light-gray {
-            background-color: #f8f9fa !important;
-        }
+    /* Hari badges */
+    .badge-hari-1 { background: #e3f2fd; color: #1565c0; } /* Senin */
+    .badge-hari-2 { background: #e8f5e9; color: #2e7d32; } /* Selasa */
+    .badge-hari-3 { background: #fff3e0; color: #e65100; } /* Rabu */
+    .badge-hari-4 { background: #fce4ec; color: #880e4f; } /* Kamis */
+    .badge-hari-5 { background: #ede7f6; color: #4527a0; } /* Jumat */
+    .badge-hari-6 { background: #e0f2f1; color: #004d40; } /* Sabtu */
 
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.4rem 0.8rem;
-            font-weight: 600;
-            border-radius: 4px;
-        }
+    /* ── Jadwal cell ──────────────────────────────── */
+    .jadwal-cell { display: flex; flex-direction: column; gap: 3px; }
+    .jadwal-time { font-size: .8rem; color: #555; display: flex; align-items: center; gap: 4px; }
+    .jadwal-time svg { opacity: .45; }
 
-        .badge-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
+    /* ── Action Buttons ───────────────────────────── */
+    .btn-actions { display: flex; gap: 5px; }
+    .btn-icon-sm {
+        width: 33px; height: 33px; padding: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 6px; border: none; cursor: pointer;
+        font-size: 15px; transition: all .2s;
+    }
+    .btn-icon-edit   { background: #e3f2fd; color: #1976d2; }
+    .btn-icon-edit:hover   { background: #1976d2; color: #fff; }
+    .btn-icon-delete { background: #ffebee; color: #d32f2f; }
+    .btn-icon-delete:hover { background: #d32f2f; color: #fff; }
 
-        .badge-secondary {
-            background-color: #e7e7e7;
-            color: #666;
-        }
+    /* ── Schedule Box (in modal) ──────────────────── */
+    .schedule-box {
+        background: #f8fbff; border: 1px solid #dbeafe;
+        border-radius: 8px; padding: 16px 18px;
+    }
+    .schedule-box__label {
+        font-size: .78rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .6px; color: #1976d2;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .jadwal-warning {
+        margin-top: 10px; padding: 8px 12px;
+        background: #fff3e0; color: #e65100;
+        border-radius: 6px; font-size: .8rem; font-weight: 500;
+    }
 
-        .badge-light-primary {
-            background-color: #e7f1ff;
-            color: #0052cc;
-        }
+    /* ── Modal ────────────────────────────────────── */
+    .modal-content { border: none; border-radius: 10px; box-shadow: 0 8px 40px rgba(0,0,0,.13); }
+    .form-control-lg, .form-select-lg {
+        border-radius: 6px; border: 1px solid #e0e0e0;
+        padding: .65rem 1rem; font-size: .95rem;
+    }
+    .form-control-lg:focus, .form-select-lg:focus, .form-control:focus {
+        border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25,118,210,.1);
+    }
+    input[type="time"].form-control-lg { font-variant-numeric: tabular-nums; }
+    .input-group-lg .input-group-text {
+        border-color: #e0e0e0; background: #f9f9f9;
+        font-size: .8rem; border-radius: 0 6px 6px 0 !important;
+    }
+    .input-group-lg input { border-radius: 6px 0 0 6px !important; }
 
-        .btn-actions {
-            display: flex;
-            gap: 6px;
-        }
+    /* ── Empty / Loading ──────────────────────────── */
+    .empty-state { text-align: center; padding: 52px 20px; }
+    .empty-state__icon { margin: 0 auto 16px; }
+    .empty-state__title { font-size: 1rem; font-weight: 600; color: #555; }
+    .empty-state__subtitle { font-size: .85rem; color: #aaa; margin-top: 4px; }
+    .loading-state {
+        display: flex; align-items: center; justify-content: center; padding: 48px 20px;
+    }
 
-        .btn-icon-sm {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s ease;
-        }
+    /* ── Toast ────────────────────────────────────── */
+    .toast {
+        background: #fff; border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.13);
+        border: none; min-width: 320px;
+        animation: slideInRight .3s ease;
+    }
+    .toast-body { padding: 14px 16px; }
+    .toast-success { border-left: 4px solid #4caf50; }
+    .toast-error   { border-left: 4px solid #f44336; }
+    .toast-info    { border-left: 4px solid #2196f3; }
+    .toast-warning { border-left: 4px solid #ff9800; }
 
-        .btn-icon-edit {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
+    /* ── Misc ─────────────────────────────────────── */
+    .icon-circle {
+        width: 48px; height: 48px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .icon-warning  { background: #fff3e0; color: #f57c00; }
+    .text-gray-700 { color: #555; }
+    .fs-8 { font-size: .75rem !important; }
+    .bg-light-gray { background-color: #f8f9fa !important; }
+    .btn-primary { background: #1976d2; border-color: #1976d2; }
+    .btn-primary:hover { background: #1565c0; border-color: #1565c0; }
+    .btn-danger  { background: #d32f2f; border-color: #d32f2f; }
+    .btn-danger:hover { background: #c62828; border-color: #c62828; }
+    .btn-light   { background: #f5f5f5; border-color: #e0e0e0; color: #333; }
+    .btn-light:hover { background: #eee; }
 
-        .btn-icon-edit:hover {
-            background-color: #1976d2;
-            color: white;
-        }
-
-        .btn-icon-delete {
-            background-color: #ffebee;
-            color: #d32f2f;
-        }
-
-        .btn-icon-delete:hover {
-            background-color: #d32f2f;
-            color: white;
-        }
-
-        .toast {
-            background-color: white;
-            border-radius: 6px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-            border: none;
-            min-width: 340px;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast-header {
-            background-color: transparent;
-            border-bottom: none;
-            padding: 0;
-        }
-
-        .toast-body {
-            padding: 16px;
-        }
-
-        .toast-success {
-            border-left: 4px solid #4caf50;
-        }
-
-        .toast-error {
-            border-left: 4px solid #f44336;
-        }
-
-        .icon-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .icon-success {
-            background-color: #e8f5e9;
-            color: #4caf50;
-        }
-
-        .icon-error {
-            background-color: #ffebee;
-            color: #f44336;
-        }
-
-        .icon-warning {
-            background-color: #fff3e0;
-            color: #ff9800;
-        }
-
-        .modal-content {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .form-control-lg, .form-select-lg {
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-            padding: 0.65rem 1rem;
-            font-size: 0.95rem;
-        }
-
-        .form-control-lg:focus, .form-select-lg:focus {
-            border-color: #1976d2;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-        }
-
-        .form-label {
-            color: #333;
-        }
-
-        small {
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .btn-primary {
-            background-color: #1976d2;
-            border-color: #1976d2;
-        }
-
-        .btn-primary:hover {
-            background-color: #1565c0;
-            border-color: #1565c0;
-        }
-
-        .btn-danger {
-            background-color: #d32f2f;
-            border-color: #d32f2f;
-        }
-
-        .btn-danger:hover {
-            background-color: #c62828;
-            border-color: #c62828;
-        }
-
-        .btn-light {
-            background-color: #f5f5f5;
-            border-color: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-light:hover {
-            background-color: #eeeeee;
-        }
-
-        .text-muted {
-            color: #999 !important;
-        }
-
-        .table td {
-            padding: 12px 16px;
-            vertical-align: middle;
-        }
-
-        .table th {
-            padding: 12px 16px;
-            font-weight: 700;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-        }
-
-        .text-gray-700 {
-            color: #555;
-        }
-
-        .fs-8 {
-            font-size: 0.75rem !important;
-        }
-
-        .text-primary {
-            color: #1976d2 !important;
-        }
-
-        .text-gray-600 {
-            color: #666 !important;
-        }
-
-        .text-gray-900 {
-            color: #333 !important;
-        }
-    </style>
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(20px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0; transform: translateX(20px); }
+    }
+</style>
 @endpush
 
 @push('scripts')
-    <script>
-        let editingId = null;
-        let deleteId = null;
-        let currentData = [];
-        let allData = [];
-        let matkulList = [];
+<script>
+    /* ── State ──────────────────────────────────────── */
+    let editingId   = null;
+    let deleteId    = null;
+    let allData     = [];
+    let currentData = [];
+    let matkulList  = [];
+    let dosenList   = [];
+    let ruanganList = [];
 
-        const API_URL = '/api/v1/classes';
-        const MATKUL_API = '/api/v1/courses';
+    const API_URL     = '/api/v1/classes';
+    const MATKUL_API  = '/api/v1/courses';
+    const DOSEN_API   = '/api/v1/lecturers';
+    const RUANGAN_API = '/api/v1/ruangan';
 
-        function renderTable(data) {
-            const tbody = document.getElementById('kelasTableBody');
-            const emptyState = document.getElementById('emptyState');
+    const HARI_ORDER = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const HARI_CLASS = {
+        Senin:'badge-hari-1', Selasa:'badge-hari-2', Rabu:'badge-hari-3',
+        Kamis:'badge-hari-4', Jumat:'badge-hari-5', Sabtu:'badge-hari-6'
+    };
 
-            if (data.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('d-none');
-                return;
+    /* ── Helpers ────────────────────────────────────── */
+    function escHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+            .replace(/'/g,'&#039;');
+    }
+
+    function fmtTime(t) {
+        if (!t) return '–';
+        return t.slice(0, 5); // "08:00:00" → "08:00"
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const id = 'toast-' + Date.now();
+        const icons = { success:'✓', error:'✕', warning:'⚠', info:'ℹ' };
+        const colors = {
+            success:'background:#e8f5e9;color:#388e3c',
+            error:  'background:#ffebee;color:#d32f2f',
+            warning:'background:#fff3e0;color:#f57c00',
+            info:   'background:#e3f2fd;color:#1976d2',
+        };
+        container.insertAdjacentHTML('beforeend', `
+            <div id="${id}" class="toast toast-${type}" role="alert">
+                <div class="toast-body d-flex align-items-start gap-3">
+                    <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;${colors[type]}">${icons[type]||'ℹ'}</div>
+                    <div class="pt-1 fw-semibold" style="font-size:.88rem;color:#333">${message}</div>
+                </div>
+            </div>
+        `);
+        const el = document.getElementById(id);
+        setTimeout(() => {
+            el.style.animation = 'fadeOut .3s ease forwards';
+            setTimeout(() => el.remove(), 300);
+        }, 4000);
+    }
+
+    function setLoading(show) {
+        document.getElementById('loadingState').style.display = show ? 'flex' : 'none';
+    }
+
+    function setSubmitLoading(on) {
+        document.getElementById('submitText').textContent = on ? 'Menyimpan...' : (editingId ? 'Perbarui' : 'Simpan');
+        document.getElementById('submitSpinner').classList.toggle('d-none', !on);
+        document.getElementById('submitBtn').disabled = on;
+    }
+
+    function setDeleteLoading(on) {
+        document.getElementById('deleteText').textContent = on ? 'Menghapus...' : 'Hapus';
+        document.getElementById('deleteSpinner').classList.toggle('d-none', !on);
+        document.getElementById('confirmDeleteBtn').disabled = on;
+    }
+
+    /* ── Populate Selects ───────────────────────────── */
+    function populateSelect(elId, list, valueFn, labelFn, placeholder) {
+        const sel = document.getElementById(elId);
+        const current = sel.value;
+        sel.innerHTML = `<option value="">${placeholder}</option>`;
+        list.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = valueFn(item);
+            opt.textContent = labelFn(item);
+            if (String(opt.value) === String(current)) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function populateAllSelects() {
+        populateSelect('matkulId',  matkulList,  m => m.id, m => `${m.kode_matkul} — ${m.nama_matkul}`, 'Pilih Mata Kuliah');
+        populateSelect('dosenId',   dosenList,   d => d.id, d => d.nama_dosen || d.name || `Dosen #${d.id}`, 'Pilih Dosen');
+        populateSelect('ruanganId', ruanganList, r => r.id, r => `${r.kode_ruangan} — ${r.nama_ruangan}`, 'Pilih Ruangan');
+    }
+
+    function buildPeriodeFilter() {
+        const sel = document.getElementById('filterPeriode');
+        const current = sel.value;
+        const periodes = [...new Set(allData.map(k => k.periode_semester).filter(Boolean))].sort();
+        sel.innerHTML = '<option value="">Semua Periode</option>';
+        periodes.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p; opt.textContent = p;
+            if (p === current) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    /* ── Fetch Reference Data ───────────────────────── */
+    function fetchReferenceData() {
+        const headers = { 'Accept':'application/json', 'X-Requested-With':'XMLHttpRequest' };
+
+        Promise.allSettled([
+            fetch(MATKUL_API,  { headers }).then(r => r.json()),
+            fetch(DOSEN_API,   { headers }).then(r => r.json()),
+            fetch(RUANGAN_API, { headers }).then(r => r.json()),
+        ]).then(([mkRes, dsRes, ruRes]) => {
+            if (mkRes.status === 'fulfilled' && mkRes.value.success) {
+                matkulList = Array.isArray(mkRes.value.data) ? mkRes.value.data : [mkRes.value.data];
             }
-
-            emptyState.classList.add('d-none');
-            tbody.innerHTML = data.map((item) => `
-                <tr>
-                    <td><span class="fw-bold text-primary">${item.nama_kelas}</span></td>
-                    <td><span class="fw-semibold">${item.mata_kuliah?.nama_matkul || 'N/A'}</span></td>
-                    <td><span class="badge badge-light-primary">${item.kapasitas} Siswa</span></td>
-                    <td><span class="text-gray-600">${item.periode_semester}</span></td>
-                    <td>
-                        <span class="badge badge-success">
-                            ✓ Aktif
-                        </span>
-                    </td>
-                    <td>
-                        <div class="btn-actions">
-                            <button type="button" class="btn-icon-sm btn-icon-edit" onclick="editKelas(${item.id})" title="Edit">
-                                ✎
-                            </button>
-                            <button type="button" class="btn-icon-sm btn-icon-delete" onclick="showDeleteConfirm(${item.id}, '${item.nama_kelas}')" title="Hapus">
-                                ✕
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function populateMatkulSelect() {
-            const matkulSelect = document.getElementById('matkulId');
-            
-            if (!matkulList || matkulList.length === 0) {
-                matkulSelect.innerHTML = '<option value="">Pilih Mata Kuliah</option><option value="" disabled>Tidak ada data</option>';
-                return;
+            if (dsRes.status === 'fulfilled' && dsRes.value.success) {
+                dosenList = Array.isArray(dsRes.value.data) ? dsRes.value.data : [dsRes.value.data];
             }
-
-            const matkulOptions = '<option value="">Pilih Mata Kuliah</option>' + 
-                matkulList.map(m => `<option value="${m.id}">${m.nama_matkul}</option>`).join('');
-            
-            matkulSelect.innerHTML = matkulOptions;
-        }
-
-        function fetchMatkulData() {
-            fetch(MATKUL_API, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(result => {
-                if (result.success && result.data) {
-                    matkulList = Array.isArray(result.data) ? result.data : [result.data];
-                    populateMatkulSelect();
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching matkul:', error);
-            });
-        }
-
-        function fetchData() {
-            const tbody = document.getElementById('kelasTableBody');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><span class="text-muted">Memuat data...</span></td></tr>';
-
-            fetch(API_URL, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(result => {
-                if (result.success && result.data) {
-                    const data = Array.isArray(result.data) ? result.data : [result.data];
-                    allData = data;
-                    currentData = data;
-                    renderTable(currentData);
-                    showToast('Data kelas berhasil dimuat', 'success');
-                } else {
-                    throw new Error(result.message || 'Gagal mengambil data');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                renderTable([]);
-                showToast('Gagal memuat data: ' + error.message, 'error');
-            });
-        }
-
-        function editKelas(id) {
-            const item = allData.find(x => x.id === id);
-            if (!item) return;
-
-            editingId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Kelas';
-            document.getElementById('namaKelas').value = item.nama_kelas;
-            document.getElementById('matkulId').value = item.matkul_id;
-            document.getElementById('kapasitas').value = item.kapasitas;
-            document.getElementById('periode').value = item.periode_semester;
-            document.getElementById('status').value = 'aktif';
-
-            const modal = new bootstrap.Modal(document.getElementById('kelasModal'));
-            modal.show();
-        }
-
-        function showDeleteConfirm(id, name) {
-            deleteId = id;
-            document.getElementById('deleteItemName').textContent = name;
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            modal.show();
-        }
-
-        function deleteKelas() {
-            if (deleteId === null) return;
-
-            const index = allData.findIndex(x => x.id === deleteId);
-            if (index > -1) {
-                const deletedItem = allData.splice(index, 1)[0];
-                currentData = allData;
-                renderTable(currentData);
-                
-                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                showToast(`${deletedItem.nama_kelas} telah dihapus`, 'success');
-                
-                deleteId = null;
+            if (ruRes.status === 'fulfilled' && ruRes.value.success) {
+                ruanganList = Array.isArray(ruRes.value.data) ? ruRes.value.data : [ruRes.value.data];
             }
+            populateAllSelects();
+        });
+    }
+
+    /* ── Render Table ───────────────────────────────── */
+    function renderTable(data) {
+        const tbody  = document.getElementById('kelasTableBody');
+        const empty  = document.getElementById('emptyState');
+        const q      = document.getElementById('searchInput').value;
+
+        if (data.length === 0) {
+            tbody.innerHTML = '';
+            empty.classList.remove('d-none');
+            document.getElementById('emptySubtitle').textContent = q
+                ? `Tidak ditemukan kelas dengan kata kunci "${q}"`
+                : 'Mulai dengan menambahkan kelas baru';
+            return;
         }
+        empty.classList.add('d-none');
 
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toastId = 'toast-' + Date.now();
+        tbody.innerHTML = data.map(item => {
+            // Resolve display names from ref lists or embedded relations
+            const matkulNama = item.mata_kuliah?.nama_matkul
+                || matkulList.find(m => m.id === item.matkul_id)?.nama_matkul
+                || `Matkul #${item.matkul_id}`;
 
-            let icon = 'ℹ';
-            let iconClass = 'icon-info';
-            let toastClass = 'toast-info';
+            const dosenNama = item.dosen?.nama_dosen
+                || item.dosen?.name
+                || dosenList.find(d => d.id === item.dosen_id)?.nama_dosen
+                || dosenList.find(d => d.id === item.dosen_id)?.name
+                || `Dosen #${item.dosen_id}`;
 
-            if (type === 'success') {
-                icon = '✓';
-                iconClass = 'icon-success';
-                toastClass = 'toast-success';
-            } else if (type === 'error') {
-                icon = '✕';
-                iconClass = 'icon-error';
-                toastClass = 'toast-error';
-            }
+            const ruanganNama = item.ruangan?.kode_ruangan
+                || ruanganList.find(r => r.id === item.ruangan_id)?.kode_ruangan
+                || `Ruangan #${item.ruangan_id}`;
 
-            const toastHTML = `
-                <div id="${toastId}" class="toast ${toastClass}" role="alert">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="icon-circle ${iconClass}" style="flex-shrink: 0;">${icon}</div>
-                        <div class="flex-grow-1 pt-2">
-                            <div class="fw-semibold text-gray-900" style="font-size: 0.95rem;">${message}</div>
+            const hariClass = HARI_CLASS[item.hari] || 'badge-light-secondary';
+
+            return `
+            <tr>
+                <td><span class="fw-bold text-primary">${escHtml(item.nama_kelas)}</span></td>
+                <td>
+                    <div class="fw-semibold" style="font-size:.875rem">${escHtml(matkulNama)}</div>
+                    ${item.mata_kuliah?.sks ? `<div class="text-muted" style="font-size:.75rem">${item.mata_kuliah.sks} SKS</div>` : ''}
+                </td>
+                <td>
+                    <div style="font-size:.875rem;color:#444">${escHtml(dosenNama)}</div>
+                </td>
+                <td>
+                    <div class="jadwal-cell">
+                        <span class="badge ${hariClass}" style="width:fit-content">${escHtml(item.hari || '–')}</span>
+                        <div class="jadwal-time">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 6V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            ${fmtTime(item.jam_mulai)} – ${fmtTime(item.jam_selesai)}
                         </div>
                     </div>
-                </div>
-            `;
+                </td>
+                <td>
+                    <span class="badge badge-light-secondary">${escHtml(ruanganNama)}</span>
+                </td>
+                <td>
+                    <span class="badge badge-light-primary">${item.kapasitas ?? '–'} org</span>
+                </td>
+                <td>
+                    <span class="text-muted" style="font-size:.8rem">${escHtml(item.periode_semester || '–')}</span>
+                </td>
+                <td>
+                    <div class="btn-actions">
+                        <button type="button" class="btn-icon-sm btn-icon-edit"
+                            onclick="editKelas(${item.id})" title="Edit">✎</button>
+                        <button type="button" class="btn-icon-sm btn-icon-delete"
+                            onclick="showDeleteConfirm(${item.id}, '${escHtml(item.nama_kelas)}')" title="Hapus">✕</button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    }
 
-            container.insertAdjacentHTML('beforeend', toastHTML);
+    /* ── Fetch Main Data ────────────────────────────── */
+    function fetchData() {
+        setLoading(true);
+        document.getElementById('kelasTableBody').innerHTML = '';
+        document.getElementById('emptyState').classList.add('d-none');
 
-            const toastElement = document.getElementById(toastId);
-            setTimeout(() => {
-                toastElement.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => toastElement.remove(), 300);
-            }, 4000);
-        }
-
-        document.getElementById('kelasForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = {
-                nama_kelas: document.getElementById('namaKelas').value,
-                matkul_id: parseInt(document.getElementById('matkulId').value),
-                dosen_id: 0,
-                kapasitas: parseInt(document.getElementById('kapasitas').value),
-                periode_semester: document.getElementById('periode').value
-            };
-
-            if (editingId) {
-                const index = allData.findIndex(x => x.id === editingId);
-                if (index > -1) {
-                    allData[index] = { ...allData[index], ...formData };
-                    showToast(`${formData.nama_kelas} telah diperbarui`, 'success');
-                    editingId = null;
-                }
+        fetch(API_URL, {
+            headers: { 'Accept':'application/json', 'X-Requested-With':'XMLHttpRequest' }
+        })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(result => {
+            if (result.success && result.data) {
+                allData     = Array.isArray(result.data) ? result.data : [result.data];
+                currentData = [...allData];
+                buildPeriodeFilter();
+                applyFilters();
             } else {
-                const newId = Math.max(...allData.map(x => x.id), 0) + 1;
-                const selectedMatkul = matkulList.find(m => m.id === formData.matkul_id);
-                allData.unshift({ 
-                    id: newId, 
-                    ...formData, 
-                    mata_kuliah: selectedMatkul,
-                    dosen: null,
-                    materi: [],
-                    detail_krs: [],
-                    created_at: new Date().toISOString(), 
-                    updated_at: new Date().toISOString() 
-                });
-                showToast(`${formData.nama_kelas} telah ditambahkan`, 'success');
+                throw new Error(result.message || 'Gagal mengambil data');
             }
+        })
+        .catch(err => {
+            console.error(err);
+            renderTable([]);
+            showToast('Gagal memuat data: ' + err.message, 'error');
+        })
+        .finally(() => setLoading(false));
+    }
 
-            currentData = allData;
-            renderTable(currentData);
+    /* ── Filter ─────────────────────────────────────── */
+    function applyFilters() {
+        const q       = document.getElementById('searchInput').value.toLowerCase().trim();
+        const hari    = document.getElementById('filterHari').value;
+        const periode = document.getElementById('filterPeriode').value;
 
-            this.reset();
-            bootstrap.Modal.getInstance(document.getElementById('kelasModal')).hide();
+        currentData = allData.filter(item => {
+            const matkulNama = item.mata_kuliah?.nama_matkul
+                || matkulList.find(m => m.id === item.matkul_id)?.nama_matkul || '';
+
+            const matchQ = !q
+                || item.nama_kelas?.toLowerCase().includes(q)
+                || matkulNama.toLowerCase().includes(q)
+                || item.hari?.toLowerCase().includes(q);
+
+            const matchHari    = !hari    || item.hari === hari;
+            const matchPeriode = !periode || item.periode_semester === periode;
+
+            return matchQ && matchHari && matchPeriode;
         });
 
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            deleteKelas();
-        });
+        renderTable(currentData);
+    }
 
-        document.getElementById('kelasModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('kelasForm').reset();
-            document.getElementById('modalTitle').textContent = 'Tambah Kelas';
-            editingId = null;
-        });
+    /* ── Edit ───────────────────────────────────────── */
+    function editKelas(id) {
+        const item = allData.find(x => x.id === id);
+        if (!item) return;
 
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const query = e.target.value.toLowerCase();
-            const filtered = allData.filter(item =>
-                item.nama_kelas.toLowerCase().includes(query) ||
-                item.mata_kuliah?.nama_matkul.toLowerCase().includes(query)
-            );
-            currentData = filtered;
-            renderTable(currentData);
-        });
+        editingId = id;
+        document.getElementById('modalTitle').textContent   = 'Edit Kelas';
+        document.getElementById('submitText').textContent   = 'Perbarui';
+        document.getElementById('namaKelas').value          = item.nama_kelas   || '';
+        document.getElementById('kapasitas').value          = item.kapasitas    || '';
+        document.getElementById('matkulId').value           = item.matkul_id    || '';
+        document.getElementById('dosenId').value            = item.dosen_id     || '';
+        document.getElementById('ruanganId').value          = item.ruangan_id   || '';
+        document.getElementById('periode').value            = item.periode_semester || '';
+        document.getElementById('hari').value               = item.hari         || '';
+        document.getElementById('jamMulai').value           = item.jam_mulai?.slice(0,5)   || '';
+        document.getElementById('jamSelesai').value         = item.jam_selesai?.slice(0,5) || '';
 
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchMatkulData();
-            fetchData();
-        });
-    </script>
+        new bootstrap.Modal(document.getElementById('kelasModal')).show();
+    }
 
-    <style>
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(20px);
-            }
+    /* ── Delete ─────────────────────────────────────── */
+    function showDeleteConfirm(id, name) {
+        deleteId = id;
+        document.getElementById('deleteItemName').textContent = name;
+        new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+    }
+
+    /* ── Jam validation ─────────────────────────────── */
+    function validateJam() {
+        const mulai   = document.getElementById('jamMulai').value;
+        const selesai = document.getElementById('jamSelesai').value;
+        const warning = document.getElementById('jadwalConflictWarning');
+        if (mulai && selesai && selesai <= mulai) {
+            warning.classList.remove('d-none');
+            return false;
         }
-    </style>
+        warning.classList.add('d-none');
+        return true;
+    }
+    document.getElementById('jamMulai').addEventListener('change', validateJam);
+    document.getElementById('jamSelesai').addEventListener('change', validateJam);
+
+    /* ── Form Submit ────────────────────────────────── */
+    document.getElementById('kelasForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        this.classList.add('was-validated');
+        if (!this.checkValidity()) return;
+        if (!validateJam()) return;
+
+        const payload = {
+            nama_kelas:       document.getElementById('namaKelas').value.trim(),
+            matkul_id:        parseInt(document.getElementById('matkulId').value),
+            dosen_id:         parseInt(document.getElementById('dosenId').value),
+            ruangan_id:       parseInt(document.getElementById('ruanganId').value),
+            kapasitas:        parseInt(document.getElementById('kapasitas').value),
+            periode_semester: document.getElementById('periode').value.trim(),
+            hari:             document.getElementById('hari').value,
+            jam_mulai:        document.getElementById('jamMulai').value + ':00',
+            jam_selesai:      document.getElementById('jamSelesai').value + ':00',
+        };
+
+        const isEdit = !!editingId;
+        setSubmitLoading(true);
+
+        fetch(isEdit ? `${API_URL}/${editingId}` : API_URL, {
+            method:  isEdit ? 'PUT' : 'POST',
+            headers: {
+                'Accept':        'application/json',
+                'Content-Type':  'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(r => { if (!r.ok) return r.json().then(err => Promise.reject(err)); return r.json(); })
+        .then(result => {
+            if (result.success) {
+                showToast(
+                    isEdit
+                        ? `Kelas "${payload.nama_kelas}" berhasil diperbarui`
+                        : `Kelas "${payload.nama_kelas}" berhasil ditambahkan`,
+                    'success'
+                );
+                bootstrap.Modal.getInstance(document.getElementById('kelasModal')).hide();
+                fetchData();
+            } else {
+                throw result;
+            }
+        })
+        .catch(err => {
+            const msg = err?.message
+                || (err?.errors ? Object.values(err.errors).flat().join(', ') : 'Terjadi kesalahan');
+            showToast('Gagal menyimpan: ' + msg, 'error');
+        })
+        .finally(() => setSubmitLoading(false));
+    });
+
+    /* ── Delete Submit ──────────────────────────────── */
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (!deleteId) return;
+        setDeleteLoading(true);
+
+        fetch(`${API_URL}/${deleteId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept':        'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]')?.content || '',
+            }
+        })
+        .then(r => { if (!r.ok) return r.json().then(err => Promise.reject(err)); return r.json(); })
+        .then(result => {
+            if (result.success) {
+                const item = allData.find(x => x.id === deleteId);
+                showToast(`Kelas "${item?.nama_kelas || ''}" berhasil dihapus`, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                fetchData();
+            } else {
+                throw result;
+            }
+        })
+        .catch(err => showToast('Gagal menghapus: ' + (err?.message || 'Terjadi kesalahan'), 'error'))
+        .finally(() => { setDeleteLoading(false); deleteId = null; });
+    });
+
+    /* ── Reset modal on close ───────────────────────── */
+    document.getElementById('kelasModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('kelasForm').reset();
+        document.getElementById('kelasForm').classList.remove('was-validated');
+        document.getElementById('jadwalConflictWarning').classList.add('d-none');
+        document.getElementById('modalTitle').textContent = 'Tambah Kelas';
+        document.getElementById('submitText').textContent = 'Simpan';
+        editingId = null;
+    });
+
+    /* ── Listeners ──────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input',  applyFilters);
+    document.getElementById('filterHari').addEventListener('change',  applyFilters);
+    document.getElementById('filterPeriode').addEventListener('change', applyFilters);
+
+    /* ── Init ───────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchReferenceData();
+        fetchData();
+    });
+</script>
 @endpush

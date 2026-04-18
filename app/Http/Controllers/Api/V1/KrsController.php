@@ -31,7 +31,7 @@ class KrsController extends Controller
                        ->where('mahasiswa_id', $userId)
                        ->where('periode_semester') 
                        ->first();
-
+                       
         if (!$krsAktif) {
             return response()->json([
                 'success' => false,
