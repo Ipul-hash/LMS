@@ -25,15 +25,18 @@ class Kelas extends Model
     {
         return $this->belongsTo(MataKuliah::class, 'matkul_id');
     }
+       
+    
 
     public function dosen()
     {
         return $this->belongsTo(User::class, 'dosen_id');
     }
+    
 
     public function materi()
     {
-        return $this->hasMany(Materi::class, 'kelas_id');
+        return $this->belongsTo(Materi::class, 'matkul_id');
     }
 
     public function detailKrs()
@@ -43,5 +46,10 @@ class Kelas extends Model
     public function ruangan(): BelongsTo
     {
         return $this->belongsTo(Ruangan::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(KrsItem::class, 'kelas_id');
     }
 }

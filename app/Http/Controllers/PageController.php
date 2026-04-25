@@ -19,6 +19,8 @@ class PageController extends Controller
     {return view('admin.manajemensidebar');}
     public function manajemenRuangan()
     {return view('admin.manajemenruangan');}
+    public function settings()
+    {return view('admin.settings');}
 
     #===========
     # Ini buat route page Mahasiswa
