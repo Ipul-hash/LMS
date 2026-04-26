@@ -136,25 +136,30 @@
                     @endcanany
 
                     @canany(['krs.approve', 'nilai.input', 'nilai.publish'])
-                                <div data-kt-menu-trigger="click"
-                                    class="menu-item menu-accordion {{ request()->routeIs('krsApprove') ? 'here show' : '' }}">
-                                    <span class="menu-link">
-                                        <span class="menu-icon">
-                                            <i class="ki-outline ki-teacher fs-2"></i>
-                                        </span>
-                                        <span class="menu-title">Manajemen Akademik</span>
-                                        <span class="menu-arrow"></span>
-                                    </span>
-                                    <div class="menu-sub menu-sub-accordion">
-                                        @can('krs.approve')
-                                        <div class="menu-item">
-                                            <a class="menu-link {{ request()->routeIs('krsApprove') ? 'active' : '' }}"
-                                                href="{{ route('krsApprove') }}">
-                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                                <span class="menu-title">Persetujuan KRS</span>
-                                            </a>
-                                        </div>
-                                        @endcan
+                                            <div data-kt-menu-trigger="click"
+                                                class="menu-item menu-accordion {{ request()->routeIs('krsApprove') ? 'here show' : '' }}">
+                                                
+                                                <span class="menu-link">
+                                                    <span class="menu-icon">
+                                                        <i class="ki-outline ki-teacher fs-2"></i>
+                                                    </span>
+                                                    <span class="menu-title">Manajemen Akademik</span>
+                                                    <span class="menu-arrow"></span>
+                                                </span>
+
+                                                <div class="menu-sub menu-sub-accordion">
+                                                    @can('krs.approve')
+                                                    <div class="menu-item">
+                                                        <a class="menu-link {{ request()->routeIs('krsApprove') ? 'active' : '' }}"
+                                                            href="{{ route('krsApprove') }}">
+                                                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                            <span class="menu-title">Persetujuan KRS</span>
+                                                        </a>
+                                                    </div>
+                                                    @endcan
+                                                </div>
+                                            </div>
+                                        @endcanany
                                         @canany(['nilai.input', 'nilai.publish'])
                                         <div class="menu-item">
                                             <a class="menu-link {{ request()->routeIs('akademik.nilai.*') ? 'active' : '' }}"
@@ -165,7 +170,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endcanany
                             @endcanany
                        
 

@@ -17,8 +17,6 @@ use App\Http\Controllers\Api\V1\DosenKrsController;
 | API Routes
 |--------------------------------------------------------------------------
 */
-            Route::get('/krs-request', [DosenKrsController::class, 'index']);
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('v1')->group(function () {
@@ -106,7 +104,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/classes/{id}', [ClassController::class, 'show'])->middleware('can:kelas.view');
         Route::put('/classes/{id}', [ClassController::class, 'update'])->middleware('can:kelas.edit');
         Route::delete('/classes/{id}', [ClassController::class, 'destroy'])->middleware('can:kelas.delete');
-
+        Route::get('/mahasiswa/kelas-saya', [ClassController::class, 'kelasSaya'])->middleware('can:kelas.view');
 
         /*
         |--------------------------------------------------------------------------

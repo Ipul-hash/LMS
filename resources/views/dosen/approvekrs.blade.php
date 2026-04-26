@@ -494,17 +494,20 @@ function showToast(msg, type='info') {
 function normSt(s) { return (s||'draft').toLowerCase(); }
 
 function statusBadge(raw) {
-    const s=normSt(raw);
-    const map={
-        menunggu:  ['ap-badge ap-badge-menunggu','pending'],
-        disetujui: ['ap-badge ap-badge-disetujui','approved'],
-        ditolak:   ['ap-badge ap-badge-ditolak','rejected'],
-        draft:     ['ap-badge ap-badge-draft','draft'],
+    const s = (raw||'draft').toLowerCase();
+    const map = {
+        'approved':  ['ap-badge ap-badge-disetujui', 'Disetujui ✓'],
+        'pending':   ['ap-badge ap-badge-menunggu',  'Menunggu'],
+        'rejected':  ['ap-badge ap-badge-ditolak',   'Ditolak ✕'],
+        'draft':     ['ap-badge ap-badge-draft',     'Draft'],
+
+        'disetujui': ['ap-badge ap-badge-disetujui', 'Disetujui ✓'],
+        'menunggu':  ['ap-badge ap-badge-menunggu',  'Menunggu'],
+        'ditolak':   ['ap-badge ap-badge-ditolak',   'Ditolak ✕'],
     };
-    const [cls,label]=map[s]||['ap-badge ap-badge-draft',s||'draft'];
+    const [cls, label] = map[s] || ['ap-badge ap-badge-draft', s || 'Draft'];
     return `<span class="${cls}"><span class="ap-badge-dot"></span>${label}</span>`;
 }
-
 /* ── Parse student data from list endpoint ──────── */
 function getKrs(student)    { return student.krs?.length ? student.krs[0] : null; }
 function getSt(student)     { const k=getKrs(student); return k ? normSt(k.status) : 'draft'; }
@@ -518,10 +521,11 @@ function getSKS(student)    {
 
 /* ── Stats ──────────────────────────────────────── */
 function updateStats(data) {
+    const stOf = s => getSt(s);
     document.getElementById('statTotal').textContent     = data.length;
-    document.getElementById('statMenunggu').textContent  = data.filter(s=>getSt(s)==='menunggu').length;
-    document.getElementById('statDisetujui').textContent = data.filter(s=>getSt(s)==='disetujui').length;
-    document.getElementById('statDitolak').textContent   = data.filter(s=>getSt(s)==='ditolak').length;
+    document.getElementById('statMenunggu').textContent  = data.filter(s => ['menunggu','pending'].includes(stOf(s))).length;
+    document.getElementById('statDisetujui').textContent = data.filter(s => ['disetujui','approved'].includes(stOf(s))).length;
+    document.getElementById('statDitolak').textContent   = data.filter(s => ['ditolak','rejected'].includes(stOf(s))).length;
 }
 
 /* ── Load list ──────────────────────────────────── */
@@ -552,13 +556,21 @@ function setFilter(f,el) {
     el.classList.add('active');
     applyFilter();
 }
-function filterList() { activeSearch=document.getElementById('searchInput').value.toLowerCase().trim(); applyFilter(); }
+// GANTI SELURUH FUNGSI applyFilter
 function applyFilter() {
-    const filtered=allStudents.filter(s=>{
-        const st=getSt(s);
-        const mF=activeFilter==='all'||st===activeFilter;
-        const mS=!activeSearch||s.name.toLowerCase().includes(activeSearch)||(s.nim_nip||'').toLowerCase().includes(activeSearch);
-        return mF&&mS;
+    const filterMap = {
+        'menunggu':  ['menunggu', 'pending'],
+        'disetujui': ['disetujui', 'approved'],
+        'ditolak':   ['ditolak', 'rejected'],
+        'draft':     ['draft'],
+    };
+    const filtered = allStudents.filter(s => {
+        const st = getSt(s);
+        const mF = activeFilter === 'all' || (filterMap[activeFilter] || [activeFilter]).includes(st);
+        const mS = !activeSearch
+            || s.name.toLowerCase().includes(activeSearch)
+            || (s.nim_nip||'').toLowerCase().includes(activeSearch);
+        return mF && mS;
     });
     renderList(filtered);
 }
@@ -575,7 +587,7 @@ function renderList(data) {
     hide('listEmpty'); show('listTableWrapper');
     document.getElementById('listBody').innerHTML=data.map((s,i)=>{
         const st=getSt(s), items=getItems(s), krs=getKrs(s), sks=getSKS(s);
-        const isPending=st==='menunggu';
+        const isPending = ['menunggu', 'pending'].includes(st);
         return `
         <tr class="${isPending?'ap-row-pending':''}">
             <td class="ps-6 py-4 text-muted fs-8">${i+1}</td>
@@ -669,6 +681,20 @@ function openDetail(userId) {
         // Support items / detail_krs / detail
         const items = krs.items || krs.detail_krs || krs.detail || [];
 
+        // TAMBAH SETELAH: const items = krs.items || krs.detail_krs || krs.detail || [];
+
+// Update local cache → fix 0 MK/0 SKS di list table
+const cacheIdx = allStudents.findIndex(x => x.id === panelUserId);
+if (cacheIdx !== -1) {
+    if (!allStudents[cacheIdx].krs || !allStudents[cacheIdx].krs.length) {
+        allStudents[cacheIdx].krs = [krs];
+    } else {
+        allStudents[cacheIdx].krs[0] = { ...allStudents[cacheIdx].krs[0], ...krs, items };
+    }
+    updateStats(allStudents);
+    applyFilter(); // re-render list dengan count yang benar
+}
+
         // Recompute from real data
         const totalSKS = items.reduce((a,item)=>{
             const sks=item.sks_point??item.kelas?.mata_kuliah?.sks??item.kelas?.mataKuliah?.sks??0;
@@ -739,13 +765,17 @@ function openDetail(userId) {
 
         // Enable buttons & highlight current status
         ['btnApprove','btnReject','btnPending'].forEach(id=>document.getElementById(id).disabled=false);
-        if(krsStatus==='disetujui') document.getElementById('btnApprove').classList.add('is-active');
-        if(krsStatus==='ditolak')   document.getElementById('btnReject').classList.add('is-active');
-        if(krsStatus==='menunggu')  document.getElementById('btnPending').classList.add('is-active');
+        if(['approved','disetujui'].includes(krsStatus)) document.getElementById('btnApprove').classList.add('is-active');
+        if(['rejected','ditolak'].includes(krsStatus))   document.getElementById('btnReject').classList.add('is-active');
+        if(['pending','menunggu'].includes(krsStatus))   document.getElementById('btnPending').classList.add('is-active');
+const stLabels={
+    disetujui:'Disetujui', approved:'Disetujui',
+    ditolak:'Ditolak',     rejected:'Ditolak',
+    menunggu:'Menunggu',   pending:'Menunggu',
+    draft:'Draft'
+};
 
-        const stLabels={disetujui:'Disetujui',ditolak:'Ditolak',menunggu:'Menunggu',draft:'Draft'};
-        document.getElementById('decisionNote').textContent=
-            `Status saat ini: ${stLabels[krsStatus]||krsStatus}. Anda dapat mengubah keputusan.`;
+           `Status saat ini: ${stLabels[krsStatus]||krsStatus}. Anda dapat mengubah keputusan.`;
     })
     .catch(err=>{
         hide('panelLoading'); show('panelEmpty');

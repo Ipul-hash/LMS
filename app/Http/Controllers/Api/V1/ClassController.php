@@ -72,9 +72,9 @@ class ClassController extends Controller
      */
     public function show(string $id)
     {
-        $data = Kelas::with(['matkul', 'dosen', 'ruangan', 'materi', 'detailKrs.mahasiswa'])->find($id);
-
-        if (!$data) {
+         $data = Kelas::with(['mataKuliah', 'dosen', 'ruangan', 'materi', 'detailKrs.mahasiswa'])->find($id);
+     
+         if (!$data) {
             return response()->json([
                 'success' => false,
                 'message' => 'Kelas tidak ditemukan, Bro!',
@@ -140,26 +140,44 @@ class ClassController extends Controller
      * Remove the specified resource from storage.
      */
    public function destroy(string $id)
-{
-    $kelas = Kelas::find($id);
+    {
+        $kelas = Kelas::find($id);
 
-    if (!$kelas) {
-        return response()->json(['success' => false, 'message' => 'Kelas tidak ditemukan'], 404);
-    }
+        if (!$kelas) {
+            return response()->json(['success' => false, 'message' => 'Kelas tidak ditemukan'], 404);
+        }
 
-    
-    if ($kelas->detailKrs()->count() > 0) {
+        
+        if ($kelas->detailKrs()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gak bisa dihapus, Bro! Udah ada mahasiswa yang ambil KRS di kelas ini. Kosongkan dulu mahasiswanya.'
+            ], 422);
+        }
+
+        $kelas->delete();
+
         return response()->json([
-            'success' => false,
-            'message' => 'Gak bisa dihapus, Bro! Udah ada mahasiswa yang ambil KRS di kelas ini. Kosongkan dulu mahasiswanya.'
-        ], 422);
+            'success' => true,
+            'message' => 'Kelas berhasil dihapus dari sistem',
+        ], 200);
     }
 
-    $kelas->delete();
+    public function kelasSaya()
+    {
+        $user = auth()->user();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Kelas berhasil dihapus dari sistem',
-    ], 200);
-}
+        $data = Kelas::whereHas('detailKrs.krs', function($query) use ($user) {
+            $query->where('mahasiswa_id', $user->id)
+                ->where('status', 'approved'); 
+        })
+        ->with(['mataKuliah', 'dosen', 'ruangan']) 
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar kelas yang lu ikuti periode ini',
+            'data' => $data,
+        ], 200);
+    }
 }

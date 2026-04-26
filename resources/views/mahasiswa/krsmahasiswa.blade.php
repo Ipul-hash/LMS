@@ -270,12 +270,46 @@
     </div>
 </div>
 
+{{-- ==================== MODAL KRS TERKUNCI ==================== --}}
+<div class="modal fade" id="lockedModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px">
+        <div class="modal-content krs-modal">
+            <div class="krs-modal-header" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+                <div class="krs-modal-icon-wrap" style="background:#d1fae5;color:#059669;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;">
+                    <i class="bi bi-lock-fill"></i>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:16px;right:16px"></button>
+            </div>
+            <div class="krs-modal-body">
+                <h6 class="krs-modal-title">KRS Sudah Disetujui</h6>
+                <p class="krs-modal-sub">KRS Anda telah disetujui oleh Dosen PA dan <strong>tidak dapat diubah</strong>.</p>
+                <p class="krs-modal-note">Hubungi Dosen PA atau Akademik jika ada perubahan yang diperlukan.</p>
+            </div>
+            <div class="krs-modal-footer">
+                <button type="button" class="krs-btn-primary" data-bs-dismiss="modal">
+                    <i class="bi bi-check-lg me-2"></i>Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('styles')
 <style>
 /* ===== RESET & BASE ===== */
 .krs-wrapper { font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* Lock button (approved state) */
+.krs-btn-lock {
+    width: 32px; height: 32px; padding: 0;
+    border: none; border-radius: 7px;
+    background: #d1fae5; color: #059669;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; cursor: pointer; transition: all .2s;
+}
+.krs-btn-lock:hover { background: #059669; color: #fff; }
 
 /* ===== STAT CARDS (Dashboard Style) ===== */
 .krs-stats-grid {
@@ -765,6 +799,7 @@
     let allKelas      = [];
     let filteredKelas = [];
     let deleteItemId  = null;
+    let krsStatus     = null;
 
     const API_KRS_ADD    = '/api/v1/krs/add';    
     const API_KRS   = '/api/v1/krs';
@@ -895,6 +930,7 @@
 
         const krs = result.data;
         krsId    = krs.id;
+        krsStatus = krs.status || 'Draft';
         krsItems = extractDetailKrs(krs);
         
         wrapper.classList.remove('d-none');
@@ -980,15 +1016,40 @@
             </td>
             <td>${dosen.name || '–'}</td>
             <td class="text-center">
-                <button class="btn btn-sm btn-light-danger" onclick="showDeleteConfirm(${item.id}, '${mk.nama_matkul}')">
-                    <i class="bi bi-trash"></i>
-                </button>
+                ${getStatusBadge(krsStatus)}
+            </td>
+            <td class="th-center">
+                ${krsStatus === 'approved'
+                    ? `<button class="krs-btn-lock" onclick="showLockedModal()" title="KRS sudah disetujui">
+                        <i class="bi bi-lock-fill"></i>
+                    </button>`
+                    : `<button class="krs-btn-del" onclick="showDeleteConfirm(${item.id}, '${esc(mk.nama_matkul)}')">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>`
+                }
             </td>
         </tr>`;
 }).join('');
 
         updateStats();
         if (allKelas.length > 0) renderKelasTable(filteredKelas.length ? filteredKelas : allKelas);
+    }
+
+    function getStatusBadge(status) {
+    const map = {
+        'Draft':     ['krs-badge-warning',   'Draft'],
+        'Menunggu':  ['krs-badge-info',      'Menunggu'],
+        'approved':  ['krs-badge-success',   'Approved ✓'],
+        'Disetujui': ['krs-badge-success',   'Disetujui ✓'],
+        'Ditolak':   ['krs-badge-danger',    'Ditolak ✕'],
+        'Dikunci':   ['krs-badge-secondary', 'Dikunci'],
+    };
+    const [cls, label] = map[status] || ['krs-badge-secondary', status || '–'];
+    return `<span class="krs-badge ${cls}">${label}</span>`;
+}
+
+    function showLockedModal() {
+        new bootstrap.Modal(document.getElementById('lockedModal')).show();
     }
 
     /* ── Fetch Kelas ────────────────────────────── */
